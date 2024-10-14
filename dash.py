@@ -16,7 +16,7 @@ if not simulation_mode:
     speed_line.request(consumer="Speed_Reader", type=gpiod.LINE_REQ_EV_RISING_EDGE)
 
 # Variables for RPM and Speed calculation
-calculation_interval = 0.1  # 0.1 second interval for 10Hz updates (100ms)
+calculation_interval = 0.05  # 0.1 second interval for 10Hz updates (100ms)
 pulses_per_revolution = 2   # Adjust based on the engine setup
 pulses_per_mi = 1025        # Adjust based on the speed sensor setup
 
