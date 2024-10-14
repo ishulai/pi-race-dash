@@ -69,6 +69,7 @@ def update_ui():
     if simulation_mode:
         update_gauge(int(sim_rpm_value), int(sim_speed_value))
     else:
+        global rpm_count, speed_count
         rpm = calculate_rpm(rpm_count, calculation_interval, pulses_per_revolution)
         speed = calculate_speed(speed_count, calculation_interval, pulses_per_mi)
         rpm_count = 0
