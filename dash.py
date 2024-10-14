@@ -10,7 +10,7 @@ rpm_line = chip.get_line(17)  # GPIO pin 17 for RPM
 rpm_line.request(consumer="RPM_Reader", type=gpiod.LINE_REQ_EV_RISING_EDGE)
 
 # Variables for RPM calculation
-calculation_interval = 1.0  # 1 second interval for RPM calculation
+calculation_interval = 0.1  # 1 second interval for RPM calculation
 pulses_per_revolution = 2   # Adjust based on the engine setup
 rpm_count = 0
 
