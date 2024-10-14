@@ -10,13 +10,13 @@ speed_output_line = chip.get_line(23)  # GPIO pin 18 for Speed signal
 
 # Define the RPM range and vehicle speed range
 min_rpm = 800  # Idle RPM (e.g., 800 RPM)
-max_rpm = 6000  # Max RPM when revved (e.g., 6000 RPM)
+max_rpm = 8000  # Max RPM when revved (e.g., 6000 RPM)
 min_speed = 0  # Minimum speed (stationary)
-max_speed = 120  # Max speed in km/h (adjust as needed)
+max_speed = 120  # Max speed in mph (adjust as needed)
 
 # Define the number of pulses per engine revolution and per kilometer
 pulses_per_revolution = 2  # Adjust for your engine's setup (e.g., 2 pulses per revolution)
-pulses_per_km = 637  # Adjust for your speed sensor (typical for an E30 is ~637 pulses per km)
+pulses_per_mi = 1025  # Adjust for your speed sensor (typical for an E30 is ~637 pulses per km)
 
 # Define the acceleration/deceleration period (in seconds)
 acceleration_period = 10  # Time to go from min to max RPM and speed and back down (in seconds)
@@ -31,7 +31,7 @@ def calculate_rpm_frequency(rpm):
 
 # Function to calculate speed pulse frequency
 def calculate_speed_frequency(speed):
-    return (speed * pulses_per_km) / 3600  # Frequency in Hz (speed in km/h)
+    return (speed * pulses_per_mi) / 3600  # Frequency in Hz (speed in km/h)
 
 # Function to simulate the RPM signal in a separate thread
 def generate_rpm_signal():
