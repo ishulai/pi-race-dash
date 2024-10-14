@@ -1,5 +1,49 @@
 import tkinter as tk
 import math
+import gpiod
+import time
+import threading
+
+# GPIO setup for RPM measurement
+chip = gpiod.Chip('gpiochip0')  # Adjust if needed
+rpm_line = chip.get_line(17)  # GPIO pin 17 for RPM
+rpm_line.request(consumer="RPM_Reader", type=gpiod.LINE_REQ_EV_RISING_EDGE)
+
+# Variables for RPM calculation
+calculation_interval = 1.0  # 1 second interval for RPM calculation
+pulses_per_revolution = 2   # Adjust based on the engine setup
+rpm_count = 0
+
+# S2000 RPM gauge constants
+max_rpm = 9000
+redline_rpm = 7000
+
+# Function to calculate RPM from pulses
+def calculate_rpm(pulse_count, interval, pulses_per_revolution):
+    return (pulse_count / interval) * (60 / pulses_per_revolution)
+
+# Function to read RPM pulses from GPIO
+def read_rpm():
+    global rpm_count
+    while True:
+        rpm_count = 0
+        start_time = time.time()
+
+        while time.time() - start_time < calculation_interval:
+            rpm_event = rpm_line.event_wait()
+            if rpm_event:
+                rpm_event = rpm_line.event_read()
+                if rpm_event.type == gpiod.LineEvent.RISING_EDGE:
+                    rpm_count += 1
+
+        # Calculate the RPM and update the gauge
+        rpm = calculate_rpm(rpm_count, calculation_interval, pulses_per_revolution)
+        update_gauge(int(rpm))
+
+# Function to update the RPM gauge on the canvas
+def update_gauge(rpm_value):
+    canvas.delete("all")
+    draw_s2k_rpm_gauge(canvas, center_x=200, center_y=200, radius=150, current_rpm=rpm_value, max_rpm=max_rpm, redline_rpm=redline_rpm)
 
 # Function to draw the S2000-style RPM gauge
 def draw_s2k_rpm_gauge(canvas, center_x, center_y, radius, current_rpm, max_rpm, redline_rpm):
@@ -44,7 +88,7 @@ def draw_s2k_rpm_gauge(canvas, center_x, center_y, radius, current_rpm, max_rpm,
     # Draw current RPM value
     canvas.create_text(center_x, center_y, text=str(current_rpm), font=("Arial", 18), fill="blue")
 
-# Create the main window
+# Create the main window for the gauge
 root = tk.Tk()
 root.title("S2000 RPM Gauge")
 root.geometry("400x400")
@@ -53,12 +97,10 @@ root.geometry("400x400")
 canvas = tk.Canvas(root, width=400, height=400)
 canvas.pack()
 
-# Draw the S2000-style RPM gauge
-current_rpm = 5000  # Example current RPM
-max_rpm = 9000      # Maximum RPM for the gauge
-redline_rpm = 7000  # Redline starts at 7000 RPM
-
-draw_s2k_rpm_gauge(canvas, center_x=200, center_y=200, radius=150, current_rpm=current_rpm, max_rpm=max_rpm, redline_rpm=redline_rpm)
+# Start a thread to read RPM and update the gauge
+rpm_thread = threading.Thread(target=read_rpm)
+rpm_thread.daemon = True  # Ensure the thread will exit when the main program exits
+rpm_thread.start()
 
 # Start the GUI event loop
 root.mainloop()
