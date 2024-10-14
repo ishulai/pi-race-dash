@@ -97,7 +97,7 @@ def update_ui():
         update_gauge(int(rpm), int(speed))
     
     # Schedule the next update after 100ms (10Hz)
-    root.after(1000 * display_interval, update_ui)
+    root.after(round(1000 * display_interval), update_ui)
 
 # Create the main window for the gauge
 root = tk.Tk()
