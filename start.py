@@ -38,14 +38,14 @@ try:
         # Poll for events within the time interval
         while time.time() - start_time < calculation_interval:
             # Poll for RPM event
-            rpm_event = rpm_line.event_wait(timeout=1)
+            rpm_event = rpm_line.event_wait()
             if rpm_event:
                 rpm_event = rpm_line.event_read()
                 if rpm_event.type == gpiod.LineEvent.RISING_EDGE:
                     rpm_count += 1
 
             # Poll for speed event
-            speed_event = speed_line.event_wait(timeout=1)
+            speed_event = speed_line.event_wait()
             if speed_event:
                 speed_event = speed_line.event_read()
                 if speed_event.type == gpiod.LineEvent.RISING_EDGE:
