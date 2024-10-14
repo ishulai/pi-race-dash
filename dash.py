@@ -3,7 +3,7 @@ import math
 import time
 import threading
 
-READ_VALUES = True
+READ_VALUES = False
 
 if READ_VALUES:
   import gpiod
@@ -16,7 +16,7 @@ if READ_VALUES:
   speed_line.request(consumer="Speed_Reader", type=gpiod.LINE_REQ_EV_RISING_EDGE)
 
 # Variables for RPM and Speed calculation
-calculation_interval = 0.1  # 1 second interval for RPM and Speed calculation
+calculation_interval = 0.1  # 0.1 second interval for 10Hz updates (100ms)
 pulses_per_revolution = 2   # Adjust based on the engine setup
 pulses_per_km = 637        # Adjust based on the speed sensor setup
 
@@ -63,18 +63,28 @@ def read_gpio():
 
 # Function to update the dashboard UI
 def update_gauge(rpm_value, speed_value):
-    # Update RPM label
+    # Update RPM label without recreating the widget
     rpm_label.config(text=f"{rpm_value}")
-    # Update Speed label
+    # Update Speed label without recreating the widget
     speed_label.config(text=f"{speed_value} km/h")
     
     # Update the RPM bar (visual effect)
-    rpm_bar.coords(rpm_bar_fill, 20, 50, 20 + int(rpm_value / max_rpm * 360), 90)
+    max_bar_width = 600  # Maximum width of the bar, adjusted for 800px window width
+    fill_width = int(rpm_value / max_rpm * max_bar_width)
+    rpm_bar.coords(rpm_bar_fill, 20, 50, 20 + fill_width, 110)
+
+# Function to periodically update the UI at 10Hz
+def update_ui():
+    # Update the UI with new data
+    update_gauge(int(rpm_count), int(speed_count))
+    
+    # Schedule the next update after 100ms (10Hz)
+    root.after(100, update_ui)
 
 # Create the main window for the gauge
 root = tk.Tk()
 root.title("Racecar Dashboard")
-root.geometry("600x400")
+root.geometry("800x480")
 root.config(bg="black")
 
 # Max values for the gauges
@@ -82,44 +92,47 @@ max_rpm = 9000
 max_speed = 300
 
 # Create RPM bar (visual effect)
-rpm_bar = tk.Canvas(root, width=400, height=50, bg="black", highlightthickness=0)
-rpm_bar.place(x=100, y=50)
-rpm_bar.create_rectangle(20, 50, 380, 90, outline="white", width=2)
-rpm_bar_fill = rpm_bar.create_rectangle(20, 50, 20, 90, fill="green", outline="green")
+rpm_bar = tk.Canvas(root, width=760, height=60, bg="black", highlightthickness=0)
+rpm_bar.place(x=20, y=50)
+rpm_bar.create_rectangle(20, 50, 620, 110, outline="white", width=2)
+rpm_bar_fill = rpm_bar.create_rectangle(20, 50, 20, 110, fill="green", outline="green")
 
 # Create RPM label
-rpm_label = tk.Label(root, text="0", font=("Arial", 30), fg="white", bg="black")
-rpm_label.place(x=450, y=50)
+rpm_label = tk.Label(root, text="0", font=("Arial", 40), fg="white", bg="black")
+rpm_label.place(x=640, y=50)
 
 # Create Speed label
-speed_label = tk.Label(root, text="0 km/h", font=("Arial", 30), fg="white", bg="black")
-speed_label.place(x=200, y=150)
+speed_label = tk.Label(root, text="0 km/h", font=("Arial", 40), fg="white", bg="black")
+speed_label.place(x=300, y=150)
 
 # Static values for water temp, oil pressure, and turbo
-water_temp_label = tk.Label(root, text="140°F", font=("Arial", 14), fg="white", bg="black")
-water_temp_label.place(x=50, y=250)
+water_temp_label = tk.Label(root, text="140°F", font=("Arial", 18), fg="white", bg="black")
+water_temp_label.place(x=50, y=300)
 
-oil_pressure_label = tk.Label(root, text="12.7 BAR", font=("Arial", 14), fg="white", bg="black")
-oil_pressure_label.place(x=250, y=250)
+oil_pressure_label = tk.Label(root, text="12.7 BAR", font=("Arial", 18), fg="white", bg="black")
+oil_pressure_label.place(x=300, y=300)
 
-turbo_pressure_label = tk.Label(root, text="5.22 BAR", font=("Arial", 14), fg="white", bg="black")
-turbo_pressure_label.place(x=450, y=250)
+turbo_pressure_label = tk.Label(root, text="5.22 BAR", font=("Arial", 18), fg="white", bg="black")
+turbo_pressure_label.place(x=550, y=300)
 
 # Warning lights (static icons)
 warning_label = tk.Label(root, text="⚠", font=("Arial", 24), fg="red", bg="black")
-warning_label.place(x=50, y=300)
+warning_label.place(x=50, y=400)
 
 battery_label = tk.Label(root, text="🔋", font=("Arial", 24), fg="yellow", bg="black")
-battery_label.place(x=150, y=300)
+battery_label.place(x=150, y=400)
 
 check_engine_label = tk.Label(root, text="🔧", font=("Arial", 24), fg="orange", bg="black")
-check_engine_label.place(x=250, y=300)
+check_engine_label.place(x=250, y=400)
 
 if READ_VALUES:
   # Start a thread to read RPM and speed and update the dashboard
   gpio_thread = threading.Thread(target=read_gpio)
   gpio_thread.daemon = True  # Ensure the thread will exit when the main program exits
   gpio_thread.start()
+
+# Start the UI update loop at 10Hz
+root.after(100, update_ui)
 
 # Start the GUI event loop
 root.mainloop()
