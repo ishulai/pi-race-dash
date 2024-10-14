@@ -1,8 +1,9 @@
 import tkinter as tk
 import threading
 from collections import deque
+import os
 
-simulation_mode = True
+simulation_mode = os.environ.get("SIMULATION_MODE") != None
 
 if not simulation_mode:
     import gpiod
