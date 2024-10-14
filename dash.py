@@ -3,7 +3,7 @@ import math
 import time
 import threading
 
-simulation_mode = True
+simulation_mode = False
 
 if not simulation_mode:
     import gpiod
@@ -38,31 +38,18 @@ def calculate_speed(pulse_count, interval, pulses_per_mi):
 def read_gpio():
     global rpm_count, speed_count
     while True:
-        rpm_count = 0
-        speed_count = 0
-        start_time = time.time()
+        rpm_event = rpm_line.event_wait()
+        if rpm_event:
+            rpm_event = rpm_line.event_read()
+            if rpm_event.type == gpiod.LineEvent.RISING_EDGE:
+                rpm_count += 1
 
-        while time.time() - start_time < calculation_interval:
-            # Poll for RPM event
-            rpm_event = rpm_line.event_wait()
-            if rpm_event:
-                rpm_event = rpm_line.event_read()
-                if rpm_event.type == gpiod.LineEvent.RISING_EDGE:
-                    rpm_count += 1
-
-            # Poll for Speed event
-            speed_event = speed_line.event_wait()
-            if speed_event:
-                speed_event = speed_line.event_read()
-                if speed_event.type == gpiod.LineEvent.RISING_EDGE:
-                    speed_count += 1
-
-        # Calculate RPM and speed based on the pulse counts
-        rpm = calculate_rpm(rpm_count, calculation_interval, pulses_per_revolution)
-        speed = calculate_speed(speed_count, calculation_interval, pulses_per_mi)
-
-        # Update the gauge with new values
-        update_gauge(int(rpm), int(speed))
+        # # Poll for Speed event
+        # speed_event = speed_line.event_wait()
+        # if speed_event:
+        #     speed_event = speed_line.event_read()
+        #     if speed_event.type == gpiod.LineEvent.RISING_EDGE:
+        #         speed_count += 1
 
 # Function to update the dashboard UI
 def update_gauge(rpm_value, speed_value):
@@ -82,7 +69,11 @@ def update_ui():
     if simulation_mode:
         update_gauge(int(sim_rpm_value), int(sim_speed_value))
     else:
-        update_gauge(int(rpm_count), int(speed_count))
+        rpm = calculate_rpm(rpm_count, calculation_interval, pulses_per_revolution)
+        speed = calculate_speed(speed_count, calculation_interval, pulses_per_mi)
+        rpm_count = 0
+        speed_count = 0
+        update_gauge(int(rpm), int(speed))
     
     # Schedule the next update after 100ms (10Hz)
     root.after(100, update_ui)
