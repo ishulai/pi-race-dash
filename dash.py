@@ -106,6 +106,12 @@ root.title("Racecar Dashboard")
 root.geometry("800x480")
 root.config(bg="black")
 
+# Set the window to full-screen mode
+root.attributes('-fullscreen', True)
+
+# Optional: Add an escape key binding to exit full-screen mode
+root.bind("<Escape>", lambda event: root.attributes("-fullscreen", False))
+
 # Max values for the gauges
 max_rpm = 9000
 redline = 7000
