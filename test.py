@@ -5,8 +5,8 @@ import threading
 
 # Define the GPIO chip and lines (output pins)
 chip = gpiod.Chip('gpiochip0')  # The GPIO chip, typically 'gpiochip0'
-rpm_output_line = chip.get_line(17)  # GPIO pin 17 for RPM signal
-speed_output_line = chip.get_line(18)  # GPIO pin 18 for Speed signal
+rpm_output_line = chip.get_line(27)  # GPIO pin 17 for RPM signal
+speed_output_line = chip.get_line(23)  # GPIO pin 18 for Speed signal
 
 # Define the RPM range and vehicle speed range
 min_rpm = 800  # Idle RPM (e.g., 800 RPM)
