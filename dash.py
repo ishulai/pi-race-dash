@@ -121,21 +121,21 @@ rpm_bar_fill = rpm_bar.create_rectangle(0, 0, 20, 50, fill="blue", outline="blue
 def render_large_value(label, x, y):
   label_size = 15
   value_size = 55
-  label = tk.Label(root, text=label, font=(font_family, label_size), fg="orange", bg="black")
-  label.place(x=x, y=y + value_size + label_size)
   value = tk.Label(root, text="0", font=(font_family, value_size), fg="white", bg="black")
   value.place(x=x, y=y)
+  label = tk.Label(root, text=label, font=(font_family, label_size), fg="orange", bg="black")
+  label.place(x=x, y=y + value_size + label_size)
   return (label, value)
 
 def render_small_value(label, unit, x, y):
   label_size = 15
   value_size = 35
-  label = tk.Label(root, text=label, font=(font_family, label_size), fg="orange", bg="black")
-  label.place(x=x, y=y + value_size + label_size)
   value = tk.Label(root, text="0", font=(font_family, value_size), fg="white", bg="black")
   value.place(x=x, y=y)
   unit = tk.Label(root, text=unit, font=(font_family, label_size), fg="orange", bg="black")
   unit.place(x=x+30, y=y + value_size - label_size)
+  label = tk.Label(root, text=label, font=(font_family, label_size), fg="orange", bg="black")
+  label.place(x=x, y=y + value_size + label_size)
   return (label, value)
 
 rpm_label, rpm_label_value = render_large_value("RPM", 40, 120)
