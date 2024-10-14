@@ -2,6 +2,7 @@ import tkinter as tk
 import math
 import time
 import threading
+from collections import deque
 
 simulation_mode = False
 
@@ -16,9 +17,17 @@ if not simulation_mode:
     speed_line.request(consumer="Speed_Reader", type=gpiod.LINE_REQ_EV_RISING_EDGE)
 
 # Variables for RPM and Speed calculation
-calculation_interval = 0.05  # 0.1 second interval for 10Hz updates (100ms)
+display_interval = 0.1  # 0.1 second interval for 10Hz updates (100ms)
 pulses_per_revolution = 2   # Adjust based on the engine setup
 pulses_per_mi = 1025        # Adjust based on the speed sensor setup
+
+# Rolling window parameters
+calculation_interval = 1.0  # 1 second rolling window for RPM and speed calculation
+num_intervals = int(calculation_interval / display_interval)  # Number of 0.1s intervals in 1 second
+
+# Rolling window buffers (to store pulse counts for the last 1 second)
+rpm_pulse_buffer = deque([0] * num_intervals, maxlen=num_intervals)
+speed_pulse_buffer = deque([0] * num_intervals, maxlen=num_intervals)
 
 rpm_count = 0
 speed_count = 0
@@ -27,12 +36,14 @@ sim_rpm_value = 0
 sim_speed_value = 0
 
 # Function to calculate RPM from pulses
-def calculate_rpm(pulse_count, interval, pulses_per_revolution):
-    return (pulse_count / interval) * (60 / pulses_per_revolution)
+def calculate_rpm(pulse_buffer, pulses_per_revolution):
+    pulse_sum = sum(pulse_buffer)
+    return (pulse_sum / calculation_interval) * (60 / pulses_per_revolution)
 
 # Function to calculate Speed from pulses
-def calculate_speed(pulse_count, interval, pulses_per_mi):
-    return (pulse_count / interval) * (3600 / pulses_per_mi)  # Speed in km/h
+def calculate_speed(pulse_buffer, pulses_per_mi):
+    pulse_sum = sum(pulse_buffer)
+    return (pulse_sum / calculation_interval) * (3600 / pulses_per_mi)  # Speed in km/h
 
 def read_rpm():
     global rpm_count
@@ -66,19 +77,27 @@ def update_gauge(rpm_value, speed_value):
 
 # Function to periodically update the UI at 10Hz
 def update_ui():
-    # Update the UI with new data
     if simulation_mode:
         update_gauge(int(sim_rpm_value), int(sim_speed_value))
     else:
         global rpm_count, speed_count
-        rpm = calculate_rpm(rpm_count, calculation_interval, pulses_per_revolution)
-        speed = calculate_speed(speed_count, calculation_interval, pulses_per_mi)
+        # Add the current pulse counts to the rolling buffer
+        rpm_pulse_buffer.append(rpm_count)
+        speed_pulse_buffer.append(speed_count)
+        
+        # Calculate the RPM and Speed from the rolling buffer
+        rpm = calculate_rpm(rpm_pulse_buffer, pulses_per_revolution)
+        speed = calculate_speed(speed_pulse_buffer, pulses_per_mi)
+        
+        # Reset the current pulse counts for the next interval
         rpm_count = 0
         speed_count = 0
+        
+        # Update the UI with the latest RPM and Speed values
         update_gauge(int(rpm), int(speed))
     
     # Schedule the next update after 100ms (10Hz)
-    root.after(100, update_ui)
+    root.after(1000 * display_interval, update_ui)
 
 # Create the main window for the gauge
 root = tk.Tk()
