@@ -16,7 +16,7 @@ if READ_VALUES:
   speed_line.request(consumer="Speed_Reader", type=gpiod.LINE_REQ_EV_RISING_EDGE)
 
 # Variables for RPM and Speed calculation
-calculation_interval = 1.0  # 1 second interval for RPM and Speed calculation
+calculation_interval = 0.1  # 1 second interval for RPM and Speed calculation
 pulses_per_revolution = 2   # Adjust based on the engine setup
 pulses_per_km = 637        # Adjust based on the speed sensor setup
 
