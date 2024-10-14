@@ -34,9 +34,8 @@ def calculate_rpm(pulse_count, interval, pulses_per_revolution):
 def calculate_speed(pulse_count, interval, pulses_per_mi):
     return (pulse_count / interval) * (3600 / pulses_per_mi)  # Speed in km/h
 
-# Function to read RPM and Speed pulses from GPIO
-def read_gpio():
-    global rpm_count, speed_count
+def read_rpm():
+    global rpm_count
     while True:
         rpm_event = rpm_line.event_wait()
         if rpm_event:
@@ -44,12 +43,14 @@ def read_gpio():
             if rpm_event.type == gpiod.LineEvent.RISING_EDGE:
                 rpm_count += 1
 
-        # # Poll for Speed event
-        # speed_event = speed_line.event_wait()
-        # if speed_event:
-        #     speed_event = speed_line.event_read()
-        #     if speed_event.type == gpiod.LineEvent.RISING_EDGE:
-        #         speed_count += 1
+def read_speed():
+    global speed_count
+    while True:
+        speed_event = speed_line.event_wait()
+        if speed_event:
+            speed_event = speed_line.event_read()
+            if speed_event.type == gpiod.LineEvent.RISING_EDGE:
+                speed_count += 1
 
 # Function to update the dashboard UI
 def update_gauge(rpm_value, speed_value):
@@ -152,13 +153,15 @@ def open_simulation_window():
 
 if not simulation_mode:
   # Start a thread to read RPM and speed and update the dashboard
-    gpio_thread = threading.Thread(target=read_gpio)
-    gpio_thread.daemon = True  # Ensure the thread will exit when the main program exits
-    gpio_thread.start()
+    rpm_thread = threading.Thread(target=read_rpm)
+    rpm_thread.daemon = True  # Ensure the thread will exit when the main program exits
+    rpm_thread.start()
+    speed_thread = threading.Thread(target=read_speed)
+    speed_thread.daemon = True  # Ensure the thread will exit when the main program exits
+    speed_thread.start()
 else:
     open_simulation_window()
 
-# Start the UI update loop at 10Hz
 root.after(100, update_ui)
 
 # Start the GUI event loop
