@@ -1,11 +1,8 @@
 import tkinter as tk
-from pyglet import font
 import threading
 from collections import deque
 
-font.add_file('futura/futura.ttf')
-
-simulation_mode = False
+simulation_mode = True
 
 if not simulation_mode:
     import gpiod
@@ -16,6 +13,8 @@ if not simulation_mode:
 
     rpm_line.request(consumer="RPM_Reader", type=gpiod.LINE_REQ_EV_RISING_EDGE)
     speed_line.request(consumer="Speed_Reader", type=gpiod.LINE_REQ_EV_RISING_EDGE)
+
+font_family = "URW Gothic"
 
 # Variables for RPM and Speed calculation
 display_interval = 0.1  # 0.1 second interval for 10Hz updates (100ms)
@@ -122,20 +121,20 @@ rpm_bar_fill = rpm_bar.create_rectangle(0, 0, 20, 50, fill="blue", outline="blue
 def render_large_value(label, x, y):
   label_size = 15
   value_size = 55
-  label = tk.Label(root, text=label, font=("Futura", label_size), fg="orange", bg="black")
+  label = tk.Label(root, text=label, font=(font_family, label_size), fg="orange", bg="black")
   label.place(x=x, y=y + value_size + label_size)
-  value = tk.Label(root, text="0", font=("Futura", value_size), fg="white", bg="black")
+  value = tk.Label(root, text="0", font=(font_family, value_size), fg="white", bg="black")
   value.place(x=x, y=y)
   return (label, value)
 
 def render_small_value(label, unit, x, y):
   label_size = 15
   value_size = 35
-  label = tk.Label(root, text=label, font=("Futura", label_size), fg="orange", bg="black")
+  label = tk.Label(root, text=label, font=(font_family, label_size), fg="orange", bg="black")
   label.place(x=x, y=y + value_size + label_size)
-  value = tk.Label(root, text="0", font=("Futura", value_size), fg="white", bg="black")
+  value = tk.Label(root, text="0", font=(font_family, value_size), fg="white", bg="black")
   value.place(x=x, y=y)
-  unit = tk.Label(root, text=unit, font=("Futura", label_size), fg="orange", bg="black")
+  unit = tk.Label(root, text=unit, font=(font_family, label_size), fg="orange", bg="black")
   unit.place(x=x+30, y=y + value_size - label_size)
   return (label, value)
 
