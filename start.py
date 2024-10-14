@@ -1,59 +1,67 @@
-import RPi.GPIO as GPIO
+import gpiod
 import time
 
-# GPIO pin assignments
-RPM_PIN = 17  # Pin where RPM signal is connected
-#SPEED_PIN = 18  # Pin where speedometer signal is connected
+# Define GPIO chip and lines (pins)
+chip = gpiod.Chip('gpiochip0')  # The GPIO chip name may vary; 'gpiochip0' is typical
+rpm_line = chip.get_line(17)  # GPIO pin 17 for RPM
+speed_line = chip.get_line(18)  # GPIO pin 18 for speedometer
+
+# Request both lines as input with edge detection for rising events (pulses)
+rpm_line.request(consumer="RPM_Reader", type=gpiod.LINE_REQ_EV_RISING_EDGE)
+speed_line.request(consumer="Speed_Reader", type=gpiod.LINE_REQ_EV_RISING_EDGE)
 
 # Variables to store counts
 rpm_count = 0
 speed_count = 0
+calculation_interval = 1.0  # Time window for calculating frequency in seconds
 
-# Time window for calculating frequency
-calculation_interval = 1.0  # in seconds
+# Constants based on vehicle setup
+pulses_per_revolution = 2  # Adjust for your engine's setup (e.g., 2 pulses per revolution)
+pulses_per_km = 637  # Adjust for your speed sensor (typical value for E30)
 
-# Setup GPIO
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(RPM_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-#GPIO.setup(SPEED_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+def calculate_rpm(pulse_count, interval, pulses_per_revolution):
+    return (pulse_count / interval) * (60 / pulses_per_revolution)
 
-# RPM pulse handler
-def rpm_pulse_callback(channel):
-    global rpm_count
-    rpm_count += 1
+def calculate_speed(pulse_count, interval, pulses_per_km):
+    return (pulse_count / interval) * (3600 / pulses_per_km)  # Speed in km/h
 
-# Speedometer pulse handler
-def speed_pulse_callback(channel):
-    global speed_count
-    speed_count += 1
-
-# Attach event handlers for rising edge pulses
-GPIO.add_event_detect(RPM_PIN, GPIO.RISING, callback=rpm_pulse_callback)
-#GPIO.add_event_detect(SPEED_PIN, GPIO.RISING, callback=speed_pulse_callback)
-
-def calculate_rpm():
-    global rpm_count
-    rpm = (rpm_count / calculation_interval) * (60 / pulses_per_revolution)
-    rpm_count = 0  # reset count after calculation
-    return rpm
-
-def calculate_speed():
-    global speed_count
-    speed = (speed_count / calculation_interval) * (3600 / pulses_per_km)
-    speed_count = 0  # reset count after calculation
-    return speed
-
-# Constants to adjust based on your car
-pulses_per_revolution = 2  # Depends on your car's RPM signal source
-#pulses_per_km = 637  # Depends on your car's wheel size and VSS
-
+# Main loop to count pulses and calculate RPM and speed
 try:
     while True:
-        time.sleep(calculation_interval)
-        rpm = calculate_rpm()
-        #speed = calculate_speed()
+        # Clear counts at the start of each interval
+        rpm_count = 0
+        speed_count = 0
+        
+        # Record start time
+        start_time = time.time()
 
-        #print(f"RPM: {rpm:.2f}, Speed: {speed:.2f} km/h")
+        # Poll for events within the time interval
+        while time.time() - start_time < calculation_interval:
+            # Poll for RPM event
+            rpm_event = rpm_line.event_wait(timeout=1)
+            if rpm_event:
+                rpm_event = rpm_line.event_read()
+                if rpm_event.type == gpiod.LineEvent.RISING_EDGE:
+                    rpm_count += 1
+
+            # Poll for speed event
+            speed_event = speed_line.event_wait(timeout=1)
+            if speed_event:
+                speed_event = speed_line.event_read()
+                if speed_event.type == gpiod.LineEvent.RISING_EDGE:
+                    speed_count += 1
+
+        # Calculate RPM and speed based on the pulse counts
+        rpm = calculate_rpm(rpm_count, calculation_interval, pulses_per_revolution)
+        speed = calculate_speed(speed_count, calculation_interval, pulses_per_km)
+
+        # Print the results
+        print(f"RPM: {rpm:.2f}, Speed: {speed:.2f} km/h")
 
 except KeyboardInterrupt:
-    GPIO.cleanup()
+    print("Exiting...")
+
+finally:
+    # Release the lines when done
+    rpm_line.release()
+    speed_line.release()
