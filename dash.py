@@ -1,9 +1,9 @@
 import tkinter as tk
-import pyglet, os
+from pyglet import font
 import threading
 from collections import deque
 
-pyglet.font.add_file('futura/futura.ttf')
+font.add_file('futura/futura.ttf')
 
 simulation_mode = False
 
