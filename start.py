@@ -61,7 +61,7 @@ def read_speed():
 
 # Function to update the dashboard UI
 def update_gauge(rpm_value, speed_value):
-    print ("RPM: " + rpm_value + ", Speed: " + speed_value, end="\r")
+    print ("RPM: " + str(rpm_value) + ", Speed: " + str(speed_value), end="\r")
 
 # Function to periodically update the UI at 10Hz
 def update_ui():
