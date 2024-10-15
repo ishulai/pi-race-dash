@@ -90,6 +90,4 @@ rpm_thread.start()
 speed_thread = threading.Thread(target=read_speed)
 speed_thread.daemon = True  # Ensure the thread will exit when the main program exits
 speed_thread.start()
-print_thread = threading.Thread(target=update_ui)
-print_thread.daemon = True
-print_thread.start()
+update_ui()
