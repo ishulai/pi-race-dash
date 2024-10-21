@@ -7,7 +7,7 @@ import gpiod
 # GPIO setup for RPM and Speed measurement
 chip = gpiod.Chip('gpiochip0')  # Adjust if needed
 rpm_line = chip.get_line(17)  # GPIO pin 17 for RPM
-speed_line = chip.get_line(18)  # GPIO pin 18 for Speed
+speed_line = chip.get_line(27)  # GPIO pin 27 for Speed
 
 rpm_line.request(consumer="RPM_Reader", type=gpiod.LINE_REQ_EV_RISING_EDGE)
 speed_line.request(consumer="Speed_Reader", type=gpiod.LINE_REQ_EV_RISING_EDGE)
