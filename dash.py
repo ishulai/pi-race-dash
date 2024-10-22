@@ -19,8 +19,10 @@ font_family = "URW Gothic"
 
 # Variables for RPM and Speed calculation
 display_interval = 0.1  # 0.1 second interval for 10Hz updates (100ms)
-pulses_per_revolution = 2   # Adjust based on the engine setup
-pulses_per_mi = 1025        # Adjust based on the speed sensor setup
+pulses_per_revolution = 3
+revs_per_mi = 846
+pulses_per_rev = 9
+pulses_per_mi = revs_per_mi * pulses_per_rev
 
 # Rolling window parameters
 calculation_interval = 1.0  # 1 second rolling window for RPM and speed calculation
