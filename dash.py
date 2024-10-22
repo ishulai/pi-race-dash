@@ -2,6 +2,7 @@ import tkinter as tk
 import threading
 from collections import deque
 import os
+import time
 
 simulation_mode = os.environ.get("SIMULATION_MODE") != None
 
@@ -38,6 +39,16 @@ speed_count = 0
 sim_rpm_value = 0
 sim_speed_value = 0
 
+min_debounce_interval = 0.002  # 2ms
+
+def calculate_dynamic_debounce(speed):
+    if speed > 0:
+        pulses_per_second = (speed / 3600) * pulses_per_mi
+        time_between_pulses = 1 / pulses_per_second
+        return max(time_between_pulses * 0.2, min_debounce_interval)
+    else:
+        return 0.01
+
 # Function to calculate RPM from pulses
 def calculate_rpm(pulse_buffer, pulses_per_revolution):
     pulse_sum = sum(pulse_buffer)
@@ -46,7 +57,7 @@ def calculate_rpm(pulse_buffer, pulses_per_revolution):
 # Function to calculate Speed from pulses
 def calculate_speed(pulse_buffer, pulses_per_mi):
     pulse_sum = sum(pulse_buffer)
-    return (pulse_sum / calculation_interval) * (3600 / pulses_per_mi)  # Speed in km/h
+    return (pulse_sum / calculation_interval) * (3600 / pulses_per_mi)
 
 def read_rpm():
     global rpm_count
@@ -59,12 +70,17 @@ def read_rpm():
 
 def read_speed():
     global speed_count
+    last_speed_time = 0
     while True:
         speed_event = speed_line.event_wait()
         if speed_event:
             speed_event = speed_line.event_read()
-            if speed_event.type == gpiod.LineEvent.RISING_EDGE:
+            current_time = time.time()
+            current_speed = calculate_speed(speed_pulse_buffer, pulses_per_mi)
+            debounce_interval = calculate_dynamic_debounce(current_speed)
+            if speed_event.type == gpiod.LineEvent.RISING_EDGE and (current_time - last_speed_time) > debounce_interval:
                 speed_count += 1
+                last_speed_time = current_time
 
 # Function to update the dashboard UI
 def update_gauge(rpm_value, speed_value):
