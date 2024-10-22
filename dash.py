@@ -59,6 +59,21 @@ def calculate_speed(pulse_buffer, pulses_per_mi):
     pulse_sum = sum(pulse_buffer)
     return (pulse_sum / calculation_interval) * (3600 / pulses_per_mi)
 
+def calculate_gear(speed, rpm):
+    if speed == 0:
+        return "N"
+    ratio = rpm / speed
+    if ratio < 42:
+        return 5
+    elif ratio < 55:
+        return 4
+    elif ratio < 72:
+        return 3
+    elif ratio < 108:
+        return 2
+    else:
+        return 1
+
 def read_rpm():
     global rpm_count
     while True:
@@ -83,11 +98,13 @@ def read_speed():
                 last_speed_time = current_time
 
 # Function to update the dashboard UI
-def update_gauge(rpm_value, speed_value):
+def update_gauge(rpm_value, speed_value, gear_value):
     # Update RPM label without recreating the widget
     rpm_label_value.config(text=f"{rpm_value}")
     # Update Speed label without recreating the widget
     speed_label_value.config(text=f"{speed_value}")
+    # Update Speed label without recreating the widget
+    gear_label_value.config(text=f"{gear_value}")
     
     # Update the RPM bar (visual effect)
     max_bar_width = 720  # Maximum width of the bar, adjusted for 800px window width
@@ -107,13 +124,14 @@ def update_ui():
         # Calculate the RPM and Speed from the rolling buffer
         rpm = calculate_rpm(rpm_pulse_buffer, pulses_per_revolution)
         speed = calculate_speed(speed_pulse_buffer, pulses_per_mi)
+        gear = calculate_gear(speed, rpm)
         
         # Reset the current pulse counts for the next interval
         rpm_count = 0
         speed_count = 0
         
         # Update the UI with the latest RPM and Speed values
-        update_gauge(int(rpm), int(speed))
+        update_gauge(int(rpm), int(speed), gear)
     
     # Schedule the next update after 100ms (10Hz)
     root.after(round(1000 * display_interval), update_ui)
@@ -143,10 +161,10 @@ rpm_bar.create_rectangle((redline - 500) / max_rpm * 720, 50, redline / max_rpm 
 rpm_bar.create_rectangle(redline / max_rpm * 720, 50, 720, 60, fill="red", outline="red")
 rpm_bar_fill = rpm_bar.create_rectangle(0, 0, 20, 50, fill="blue", outline="blue")
 
-def render_large_value(label, x, y):
+def render_large_value(label, x, y, default="0"):
   label_size = 15
   value_size = 55
-  value = tk.Label(root, text="0", font=(font_family, value_size), fg="white", bg="black")
+  value = tk.Label(root, text=default, font=(font_family, value_size), fg="white", bg="black")
   value.place(x=x, y=y)
   label = tk.Label(root, text=label, font=(font_family, label_size), fg="orange", bg="black")
   label.place(x=x, y=y + value_size + label_size)
@@ -165,7 +183,7 @@ def render_small_value(label, unit, x, y):
 
 rpm_label, rpm_label_value = render_large_value("RPM", 40, 120)
 speed_label, speed_label_value = render_large_value("MPH", 340, 120)
-gear_label, gear_label_value = render_large_value("GEAR", 640, 120)
+gear_label, gear_label_value = render_large_value("GEAR", 640, 120, "N")
 
 water_temp_label, water_temp_label_value = render_small_value("WATER TEMP", "°F", 40, 260)
 oil_temp_label, oil_temp_label_value = render_small_value("OIL TEMP", "°F", 240, 260)
