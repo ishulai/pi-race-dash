@@ -45,9 +45,9 @@ def calculate_dynamic_debounce(speed):
     if speed > 0:
         pulses_per_second = (speed / 3600) * pulses_per_mi
         time_between_pulses = 1 / pulses_per_second
-        return max(time_between_pulses * 0.2, min_debounce_interval)
+        return max(time_between_pulses * 0.5, min_debounce_interval)
     else:
-        return 0.01
+        return 0.1
 
 # Function to calculate RPM from pulses
 def calculate_rpm(pulse_buffer, pulses_per_revolution):
