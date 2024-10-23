@@ -28,12 +28,8 @@ def calculate_dynamic_debounce(speed):
         return 0.1
     
 def calculate_speed():
-    global speed_count
-    pulse_buffer.append(speed_count)
     pulse_sum = sum(pulse_buffer)
-    speed = (pulse_sum / calculation_interval) * (3600 / pulses_per_mi)
-    speed_count = 0
-    return speed
+    return (pulse_sum / calculation_interval) * (3600 / pulses_per_mi)
 
 def read_speed(line):
     import gpiod
@@ -62,7 +58,11 @@ def get_speed():
     if simulation_mode:
         return sim_speed
     else:
-        return int(calculate_speed())
+        global speed_count
+        pulse_buffer.append(speed_count)
+        speed = int(calculate_speed())
+        speed_count = 0
+        return speed
 
 def set_sim_speed(speed):
     global sim_speed
