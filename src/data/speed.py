@@ -28,6 +28,7 @@ def calculate_dynamic_debounce(speed):
         return 0.1
     
 def calculate_speed():
+    global speed_count
     pulse_buffer.append(speed_count)
     pulse_sum = sum(pulse_buffer)
     speed = (pulse_sum / calculation_interval) * (3600 / pulses_per_mi)

@@ -33,8 +33,7 @@ def listen_rpm(line):
     thread.start()
 
 def get_rpm():
-    print("SIMULATION")
-    print(simulation_mode)
+    global rpm_count
     if simulation_mode:
         return sim_rpm
     else:
