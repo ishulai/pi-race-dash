@@ -7,6 +7,7 @@ from src.ui.simulation import open_simulation_window
 from src.data.rpm import listen_rpm, get_rpm
 from src.data.speed import listen_speed, get_speed
 from src.data.signals import listen_signals, get_left_signal, get_right_signal
+from src.data.fuelswitch import listen_fuel_switch, get_fuel_switch_state
 
 simulation_mode = os.environ.get("SIMULATION_MODE") != None
 
@@ -17,6 +18,7 @@ def start_cli():
         listen_rpm(chip.get_line(17))
         listen_speed(chip.get_line(27))
         listen_signals(chip.get_line(5), chip.get_line(6))
+        listen_fuel_switch(chip.get_line(23))
 
     def log_signals():
         while True:
@@ -25,6 +27,7 @@ def start_cli():
             gear_value = calculate_gear(speed_value, rpm_value)
             left_signal_on = get_left_signal()
             right_signal_on = get_right_signal()
+            fuel_switch_on = get_fuel_switch_state()
 
             print("\033[H\033[J", end="")  # Clears the terminal
             print(f"RPM: {rpm_value}")
@@ -32,6 +35,7 @@ def start_cli():
             print(f"Gear: {gear_value}")
             print(f"Left Signal: {'On' if left_signal_on else 'Off'}")
             print(f"Right Signal: {'On' if right_signal_on else 'Off'}")
+            print(f"Low Fuel: {'On' if fuel_switch_on else 'Off'}")
             print("-" * 50)
 
             time.sleep(0.1)

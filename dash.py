@@ -5,9 +5,11 @@ from src.ui.signals import render_left_signal, render_right_signal, update_signa
 from src.ui.rpm import render_rpm_bar, update_rpm_bar
 from src.ui.textgauge import render_textgauge_large, render_textgauge_small, update_textgauge_value
 from src.ui.simulation import open_simulation_window
+from src.ui.fuelswitch import render_low_fuel_symbol, update_low_fuel_symbol
 from src.data.rpm import listen_rpm, get_rpm
 from src.data.speed import listen_speed, get_speed
 from src.data.signals import listen_signals, get_left_signal, get_right_signal
+from src.data.fuelswitch import listen_fuel_switch, get_fuel_switch_state
 
 simulation_mode = os.environ.get("SIMULATION_MODE") != None
 
@@ -38,6 +40,8 @@ def start(root):
     oil_pressure_label, oil_pressure_label_value = render_textgauge_small(root, "OIL PRESSURE", "PSI", 440, row2_y)
     fuel_label, fuel_label_value = render_textgauge_small(root, "FUEL", "KG", 640, row2_y)
 
+    fuel_switch_canvas, fuel_switch_image_item, fuel_switch_image = render_low_fuel_symbol(root, 700, row2_y)
+
     def update_ui():
         rpm_value = get_rpm()
         update_rpm_bar(rpm_bar, rpm_value, max_rpm)
@@ -53,6 +57,9 @@ def start(root):
         update_signal(left_signal_canvas, left_arrow, left_signal_on)
         update_signal(right_signal_canvas, right_arrow, right_signal_on)
 
+        fuel_switch_on = get_fuel_switch_state()
+        update_low_fuel_symbol(fuel_switch_canvas, fuel_switch_image_item, fuel_switch_on)
+
         root.after(100, update_ui)
 
     root.after(100, update_ui)
@@ -67,6 +74,7 @@ if __name__ == "__main__":
         listen_rpm(chip.get_line(17))
         listen_speed(chip.get_line(27))
         listen_signals(chip.get_line(5), chip.get_line(6))
+        listen_fuel_switch(chip.get_line(23))
     else:
         open_simulation_window(root, 9000, 150)
 
