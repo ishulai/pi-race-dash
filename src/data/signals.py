@@ -14,6 +14,8 @@ def read_signals(left_signal_line, right_signal_line):
     import gpiod
 
     global left_signal_state, right_signal_state
+    left_signal_line.request(consumer="Left_Signal_Reader", type=gpiod.LINE_REQ_EV_RISING_EDGE)
+    right_signal_line.request(consumer="Right_Signal_Reader", type=gpiod.LINE_REQ_EV_RISING_EDGE)
 
     while True:
         left_event = left_signal_line.event_wait()

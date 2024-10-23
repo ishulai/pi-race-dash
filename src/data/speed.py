@@ -35,6 +35,7 @@ def read_speed(line):
     import gpiod
 
     global speed_count
+    line.request(consumer="Speed_Reader", type=gpiod.LINE_REQ_EV_RISING_EDGE)
 
     last_speed_time = 0
     while True:
@@ -57,7 +58,7 @@ def get_speed():
     if simulation_mode:
         return sim_speed
     else:
-        return calculate_speed()
+        return int(calculate_speed())
 
 def set_sim_speed(speed):
     global sim_speed

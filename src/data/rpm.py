@@ -18,6 +18,7 @@ def read_rpm(line):
     import gpiod
 
     global rpm_count
+    line.request(consumer="RPM_Reader", type=gpiod.LINE_REQ_EV_RISING_EDGE)
 
     while True:
         rpm_event = line.event_wait()
@@ -36,7 +37,7 @@ def get_rpm():
         return sim_rpm
     else:
         pulse_sum = sum(rpm_pulse_buffer)
-        return (pulse_sum / calculation_interval) * (60 / pulses_per_revolution)
+        return int((pulse_sum / calculation_interval) * (60 / pulses_per_revolution))
 
 def set_sim_rpm(rpm):
     global sim_rpm
