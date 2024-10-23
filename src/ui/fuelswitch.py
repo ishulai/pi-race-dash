@@ -1,12 +1,5 @@
 import tkinter as tk
-import io
-from PIL import Image, ImageTk
-import cairosvg
-
-def load_svg_to_image(filepath, size=(80, 80)):
-    png_data = cairosvg.svg2png(url=filepath, output_width=size[0], output_height=size[1])
-    image = Image.open(io.BytesIO(png_data)).resize((40,40),resample=Image.NEAREST)
-    return ImageTk.PhotoImage(image)
+from .helpers import load_svg_to_image
 
 def render_low_fuel_symbol(root, x, y):
     canvas = tk.Canvas(root, width=80, height=80, bg="black", highlightthickness=0)
