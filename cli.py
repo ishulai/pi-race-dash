@@ -12,9 +12,11 @@ simulation_mode = os.environ.get("SIMULATION_MODE") != None
 
 def start_cli():
     if not simulation_mode:
-        listen_rpm()
-        listen_speed()
-        listen_signals()
+        import gpiod
+        chip = gpiod.Chip('gpiochip0')
+        listen_rpm(chip)
+        listen_speed(chip)
+        listen_signals(chip)
 
     def log_signals():
         while True:
