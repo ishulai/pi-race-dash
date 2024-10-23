@@ -64,9 +64,9 @@ if __name__ == "__main__":
     if not simulation_mode:
         import gpiod
         chip = gpiod.Chip('gpiochip0')
-        listen_rpm(chip)
-        listen_speed(chip)
-        listen_signals(chip)
+        listen_rpm(chip.get_line(17))
+        listen_speed(chip.get_line(27))
+        listen_signals(chip.get_line(5), chip.get_line(6))
     else:
         open_simulation_window(root, 9000, 150)
 
