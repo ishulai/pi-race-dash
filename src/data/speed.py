@@ -43,7 +43,7 @@ def read_speed(line):
         if speed_event:
             speed_event = line.event_read()
             current_time = time.time()
-            current_speed = calculate_speed(pulse_buffer, pulses_per_mi)
+            current_speed = calculate_speed()
             debounce_interval = calculate_dynamic_debounce(current_speed)
             if speed_event.type == gpiod.LineEvent.RISING_EDGE and (current_time - last_speed_time) > debounce_interval:
                 speed_count += 1
