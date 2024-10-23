@@ -23,7 +23,9 @@ def read_rpm(line):
     while True:
         rpm_event = line.event_wait()
         if rpm_event:
+            print("RPM EVENT")
             rpm_event = line.event_read()
+            print(rpm_event)
             if rpm_event.type == gpiod.LineEvent.RISING_EDGE:
                 rpm_count += 1
 
