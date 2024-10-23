@@ -2,7 +2,6 @@ import tkinter as tk
 import io
 from PIL import Image, ImageTk
 import cairosvg
-import os
 
 def load_svg_to_image(filepath, size=(80, 80)):
     png_data = cairosvg.svg2png(url=filepath, output_width=size[0], output_height=size[1])
