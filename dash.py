@@ -62,9 +62,11 @@ if __name__ == "__main__":
     root = tk.Tk()
 
     if not simulation_mode:
-        listen_rpm()
-        listen_speed()
-        listen_signals()
+        import gpiod
+        chip = gpiod.Chip('gpiochip0')
+        listen_rpm(chip)
+        listen_speed(chip)
+        listen_signals(chip)
     else:
         open_simulation_window(root, 9000, 150)
 

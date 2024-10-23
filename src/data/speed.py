@@ -31,12 +31,11 @@ def calculate_speed():
     pulse_sum = sum(pulse_buffer)
     return (pulse_sum / calculation_interval) * (3600 / pulses_per_mi)
 
-def read_speed():
+def read_speed(chip):
     import gpiod
 
     global speed_count
 
-    chip = gpiod.Chip('gpiochip0')
     speed_line = chip.get_line(27)
 
     last_speed_time = 0
@@ -51,8 +50,8 @@ def read_speed():
                 speed_count += 1
                 last_speed_time = current_time
 
-def listen_speed():
-    thread = threading.Thread(target=read_speed)
+def listen_speed(chip):
+    thread = threading.Thread(target=read_speed, args=(chip))
     thread.daemon = True
     thread.start()
 

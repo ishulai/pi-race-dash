@@ -14,12 +14,11 @@ rpm_count = 0
 
 sim_rpm = 0
 
-def read_rpm():
+def read_rpm(chip):
     import gpiod
 
     global rpm_count
 
-    chip = gpiod.Chip('gpiochip0')
     rpm_line = chip.get_line(17)
 
     while True:
@@ -29,8 +28,8 @@ def read_rpm():
             if rpm_event.type == gpiod.LineEvent.RISING_EDGE:
                 rpm_count += 1
 
-def listen_rpm():
-    thread = threading.Thread(target=read_rpm)
+def listen_rpm(chip):
+    thread = threading.Thread(target=read_rpm, args=(chip))
     thread.daemon = True
     thread.start()
 
