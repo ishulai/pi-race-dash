@@ -11,7 +11,7 @@ def read_fuel_switch(fuel_switch_line):
 
     global fuel_switch_state
 
-    fuel_switch_line.request(consumer="Fuel_Switch_Reader", type=gpiod.LINE_REQ_EV_BOTH_EDGES, flags=gpiod.LINE_FLAG_BIAS_PULL_UP)
+    fuel_switch_line.request(consumer="Fuel_Switch_Reader", type=gpiod.LINE_REQ_EV_BOTH_EDGES, flags=gpiod.LINE_REQ_FLAG_BIAS_PULL_UP)
 
     while True:
         fuel_event = fuel_switch_line.event_wait()

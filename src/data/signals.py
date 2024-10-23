@@ -9,34 +9,43 @@ right_signal_state = 0
 sim_left_signal = 0
 sim_right_signal = 0
 
-def read_signals(left_signal_line, right_signal_line):
+def read_left_signal(line):
     import gpiod
 
-    global left_signal_state, right_signal_state
-    left_signal_line.request(consumer="Left_Signal_Reader", type=gpiod.LINE_REQ_EV_BOTH_EDGES)
-    right_signal_line.request(consumer="Right_Signal_Reader", type=gpiod.LINE_REQ_EV_BOTH_EDGES)
+    global left_signal_state
+    line.request(consumer="Left_Signal_Reader", type=gpiod.LINE_REQ_EV_BOTH_EDGES)
 
     while True:
-        left_event = left_signal_line.event_wait()
+        left_event = line.event_wait()
         if left_event:
-            left_event = left_signal_line.event_read()
+            left_event = line.event_read()
             if left_event.type == gpiod.LineEvent.RISING_EDGE:
                 left_signal_state = 1
             else:
                 left_signal_state = 0
 
-        right_event = right_signal_line.event_wait()
-        if right_event:
-            right_event = right_signal_line.event_read()
-            if right_event.type == gpiod.LineEvent.RISING_EDGE:
+def read_right_signal(line):
+    import gpiod
+
+    global right_signal_state
+    line.request(consumer="Right_Signal_Reader", type=gpiod.LINE_REQ_EV_BOTH_EDGES)
+
+    while True:
+        left_event = line.event_wait()
+        if left_event:
+            left_event = line.event_read()
+            if left_event.type == gpiod.LineEvent.RISING_EDGE:
                 right_signal_state = 1
             else:
                 right_signal_state = 0
 
 def listen_signals(left_signal_line, right_signal_line):
-    thread = threading.Thread(target=read_signals, args=(left_signal_line, right_signal_line))
-    thread.daemon = True
-    thread.start()
+    left_thread = threading.Thread(target=read_left_signal, args=(left_signal_line))
+    left_thread.daemon = True
+    left_thread.start()
+    right_thread = threading.Thread(target=read_right_signal, args=(right_signal_line))
+    right_thread.daemon = True
+    right_thread.start()
 
 def get_left_signal():
     if simulation_mode:
