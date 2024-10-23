@@ -40,10 +40,10 @@ def read_right_signal(line):
                 right_signal_state = 0
 
 def listen_signals(left_signal_line, right_signal_line):
-    left_thread = threading.Thread(target=read_left_signal, args=(left_signal_line))
+    left_thread = threading.Thread(target=read_left_signal, args=(left_signal_line,))
     left_thread.daemon = True
     left_thread.start()
-    right_thread = threading.Thread(target=read_right_signal, args=(right_signal_line))
+    right_thread = threading.Thread(target=read_right_signal, args=(right_signal_line,))
     right_thread.daemon = True
     right_thread.start()
 

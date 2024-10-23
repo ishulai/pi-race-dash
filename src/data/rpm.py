@@ -28,7 +28,7 @@ def read_rpm(line):
                 rpm_count += 1
 
 def listen_rpm(line):
-    thread = threading.Thread(target=read_rpm, args=(line))
+    thread = threading.Thread(target=read_rpm, args=(line,))
     thread.daemon = True
     thread.start()
 

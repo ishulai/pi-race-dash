@@ -50,7 +50,7 @@ def read_speed(line):
                 last_speed_time = current_time
 
 def listen_speed(line):
-    thread = threading.Thread(target=read_speed, args=(line))
+    thread = threading.Thread(target=read_speed, args=(line,))
     thread.daemon = True
     thread.start()
 
