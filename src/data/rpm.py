@@ -23,9 +23,7 @@ def read_rpm(line):
     while True:
         rpm_event = line.event_wait()
         if rpm_event:
-            print("RPM EVENT")
             rpm_event = line.event_read()
-            print(rpm_event)
             if rpm_event.type == gpiod.LineEvent.RISING_EDGE:
                 rpm_count += 1
 
@@ -35,10 +33,15 @@ def listen_rpm(line):
     thread.start()
 
 def get_rpm():
+    print("SIMULATION")
+    print(simulation_mode)
     if simulation_mode:
         return sim_rpm
     else:
         pulse_sum = sum(rpm_pulse_buffer)
+        print("PULSE SUM")
+        print(pulse_sum)
+        print(int((pulse_sum / calculation_interval) * (60 / pulses_per_revolution)))
         return int((pulse_sum / calculation_interval) * (60 / pulses_per_revolution))
 
 def set_sim_rpm(rpm):
