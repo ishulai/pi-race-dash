@@ -16,13 +16,15 @@ def read_left_signal(line):
     line.request(consumer="Left_Signal_Reader", type=gpiod.LINE_REQ_EV_BOTH_EDGES)
 
     while True:
-        left_event = line.event_wait()
-        if left_event:
-            left_event = line.event_read()
-            if left_event.type == gpiod.LineEvent.RISING_EDGE:
+        event = line.event_wait()
+        if event:
+            event = line.event_read()
+            if event.type == gpiod.LineEvent.RISING_EDGE:
                 left_signal_state = 1
+                print('left on')
             else:
                 left_signal_state = 0
+                print('left off')
 
 def read_right_signal(line):
     import gpiod
@@ -31,13 +33,15 @@ def read_right_signal(line):
     line.request(consumer="Right_Signal_Reader", type=gpiod.LINE_REQ_EV_BOTH_EDGES)
 
     while True:
-        left_event = line.event_wait()
-        if left_event:
-            left_event = line.event_read()
-            if left_event.type == gpiod.LineEvent.RISING_EDGE:
+        event = line.event_wait()
+        if event:
+            event = line.event_read()
+            if event.type == gpiod.LineEvent.RISING_EDGE:
                 right_signal_state = 1
+                print('right on')
             else:
                 right_signal_state = 0
+                print('right off')
 
 def listen_signals(left_signal_line, right_signal_line):
     left_thread = threading.Thread(target=read_left_signal, args=(left_signal_line,))
