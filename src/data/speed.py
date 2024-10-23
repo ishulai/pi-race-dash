@@ -28,8 +28,11 @@ def calculate_dynamic_debounce(speed):
         return 0.1
     
 def calculate_speed():
+    pulse_buffer.append(speed_count)
     pulse_sum = sum(pulse_buffer)
-    return (pulse_sum / calculation_interval) * (3600 / pulses_per_mi)
+    speed = (pulse_sum / calculation_interval) * (3600 / pulses_per_mi)
+    speed_count = 0
+    return speed
 
 def read_speed(line):
     import gpiod

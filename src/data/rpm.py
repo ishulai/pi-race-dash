@@ -9,7 +9,7 @@ pulses_per_revolution = 3
 calculation_interval = 1.0
 num_intervals = int(calculation_interval / display_interval)
 
-rpm_pulse_buffer = deque([0] * num_intervals, maxlen=num_intervals)
+pulse_buffer = deque([0] * num_intervals, maxlen=num_intervals)
 rpm_count = 0
 
 sim_rpm = 0
@@ -38,11 +38,11 @@ def get_rpm():
     if simulation_mode:
         return sim_rpm
     else:
-        pulse_sum = sum(rpm_pulse_buffer)
-        print("PULSE SUM")
-        print(pulse_sum)
-        print(int((pulse_sum / calculation_interval) * (60 / pulses_per_revolution)))
-        return int((pulse_sum / calculation_interval) * (60 / pulses_per_revolution))
+        pulse_buffer.append(rpm_count)
+        pulse_sum = sum(pulse_buffer)
+        rpm = int((pulse_sum / calculation_interval) * (60 / pulses_per_revolution))
+        rpm_count = 0
+        return rpm
 
 def set_sim_rpm(rpm):
     global sim_rpm
