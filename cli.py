@@ -30,8 +30,8 @@ def start_cli():
             fuel_switch_on = get_fuel_switch_state()
 
             # print("\033[H\033[J", end="")  # Clears the terminal
-            print(f"RPM: {rpm_value}")
-            # print(f"Speed: {speed_value} MPH")
+            # print(f"RPM: {rpm_value}")
+            print(f"Speed: {speed_value} MPH")
             # print(f"Gear: {gear_value}")
             # print(f"Left Signal: {'On' if left_signal_on else 'Off'}")
             # print(f"Right Signal: {'On' if right_signal_on else 'Off'}")
