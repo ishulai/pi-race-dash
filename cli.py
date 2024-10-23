@@ -12,13 +12,13 @@ from src.data.fuelswitch import listen_fuel_switch, get_fuel_switch_state
 simulation_mode = os.environ.get("SIMULATION_MODE") != None
 
 def start_cli():
-    if not simulation_mode:
-        import gpiod
-        chip = gpiod.Chip('gpiochip0')
-        listen_rpm(chip.get_line(17))
-        listen_speed(chip.get_line(27))
-        listen_signals(chip.get_line(5), chip.get_line(6))
-        listen_fuel_switch(chip.get_line(23))
+    # if not simulation_mode:
+    #     import gpiod
+    #     chip = gpiod.Chip('gpiochip0')
+    #     listen_rpm(chip.get_line(17))
+    #     listen_speed(chip.get_line(27))
+    #     listen_signals(chip.get_line(5), chip.get_line(6))
+    #     listen_fuel_switch(chip.get_line(23))
 
     def log_signals():
         while True:
@@ -40,14 +40,16 @@ def start_cli():
 
             time.sleep(0.1)
 
-    thread = threading.Thread(target=log_signals)
-    thread.daemon = True
-    thread.start()
-
     if simulation_mode:
         root = tk.Tk()
         open_simulation_window(root, 9000, 150)
         root.mainloop()
+
+        thread = threading.Thread(target=log_signals)
+        thread.daemon = True
+        thread.start()
+    else:
+        log_signals()
 
 if __name__ == "__main__":
     start_cli()
