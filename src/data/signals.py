@@ -10,13 +10,10 @@ hazard_state = 0
 sim_left_signal = 0
 sim_right_signal = 0
 
-def read_signals(chip):
+def read_signals(left_signal_line, right_signal_line):
     import gpiod
 
     global left_signal_state, right_signal_state
-
-    left_signal_line = chip.get_line(5)
-    right_signal_line = chip.get_line(6)
 
     while True:
         left_event = left_signal_line.event_wait()
@@ -35,8 +32,8 @@ def read_signals(chip):
             else:
                 right_signal_state = 0
 
-def listen_signals(chip):
-    thread = threading.Thread(target=read_signals, args=(chip))
+def listen_signals(left_signal_line, right_signal_line):
+    thread = threading.Thread(target=read_signals, args=(left_signal_line, right_signal_line))
     thread.daemon = True
     thread.start()
 

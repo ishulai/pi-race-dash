@@ -31,18 +31,16 @@ def calculate_speed():
     pulse_sum = sum(pulse_buffer)
     return (pulse_sum / calculation_interval) * (3600 / pulses_per_mi)
 
-def read_speed(chip):
+def read_speed(line):
     import gpiod
 
     global speed_count
 
-    speed_line = chip.get_line(27)
-
     last_speed_time = 0
     while True:
-        speed_event = speed_line.event_wait()
+        speed_event = line.event_wait()
         if speed_event:
-            speed_event = speed_line.event_read()
+            speed_event = line.event_read()
             current_time = time.time()
             current_speed = calculate_speed(pulse_buffer, pulses_per_mi)
             debounce_interval = calculate_dynamic_debounce(current_speed)
@@ -50,8 +48,8 @@ def read_speed(chip):
                 speed_count += 1
                 last_speed_time = current_time
 
-def listen_speed(chip):
-    thread = threading.Thread(target=read_speed, args=(chip))
+def listen_speed(line):
+    thread = threading.Thread(target=read_speed, args=(line))
     thread.daemon = True
     thread.start()
 
