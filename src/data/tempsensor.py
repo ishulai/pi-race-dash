@@ -23,7 +23,8 @@ def read_temp():
         
         # Read voltage and calculate resistance
         raw_value = adc.readADC(adc_channel)
-        resistance = (temp_resistor * raw_value) / (3.3 - raw_value)
+        voltage = adc.toVoltage(raw_value)
+        resistance = (temp_resistor * voltage) / (3.3 - voltage)
         
         # Convert resistance to temperature
         temperature_c = resistance_to_temp(resistance)
