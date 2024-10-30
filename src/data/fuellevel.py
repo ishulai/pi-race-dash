@@ -1,48 +1,40 @@
-import threading
 import os
 import time
+import threading
+from ADS1x15 import ADS1115
 
 simulation_mode = os.environ.get("SIMULATION_MODE") != None
+update_interval = 1.0  # Update every 1 second
+adc_channel = 1  # ADC channel for the fuel level sensor
+fuel_resistor = 10  # Adjust based on your voltage divider design
 
-interval = 1.0 
-
-sim_fuel_level = 100
-
-if not simulation_mode:
-    from Adafruit_ADS1x15 import ADS1115
-    adc = ADS1115()
-    GAIN = 1
-
-v_in = 3.3
-r_fixed = 10
-
-def read_fuel_voltage():
-    if simulation_mode:
-        return 0 
-    raw_adc_value = adc.read_adc(0, gain=GAIN)
-    voltage = raw_adc_value * (4.096 / 32767)
-    return voltage
-
-def calculate_fuel_resistance(v_out, v_in=3.3, r_fixed=10):
-    if v_out == 0:
-        return 0
-    return r_fixed * ((v_in / v_out) - 1)
-
-def calculate_fuel_level(resistance):
-    full_resistance = 0 
-    empty_resistance = 59
-    
-    fuel_level = max(0, min(100, (1 - (resistance / empty_resistance)) * 100))
-    return fuel_level
+sim_fuel_level = 0
 
 def read_fuel():
-    global latest_fuel_level
+    global sim_fuel_level
+    adc = ADS1115()  # Initialize the ADS1115 instance
     while True:
-        voltage = read_fuel_voltage()
-        resistance = calculate_fuel_resistance(voltage)
-        fuel_level = calculate_fuel_level(resistance)
-        latest_fuel_level = fuel_level
-        time.sleep(interval)
+        # Read the ADC value for the fuel level sensor
+        raw_value = adc.read_voltage(adc_channel)
+        
+        # Convert the ADC reading to resistance (example formula based on your divider)
+        resistance = (fuel_resistor * raw_value) / (3.3 - raw_value)
+        
+        # Map the resistance to fuel level percentage
+        fuel_level_percent = resistance_to_fuel_level(resistance)
+        
+        # Store the fuel level
+        sim_fuel_level = fuel_level_percent
+        time.sleep(update_interval)
+
+def resistance_to_fuel_level(resistance):
+    # Example: linear mapping based on 0-59 ohms for full-empty
+    if resistance >= 59:
+        return 0
+    elif resistance <= 0:
+        return 100
+    else:
+        return (59 - resistance) / 59 * 100
 
 def listen_fuel():
     if not simulation_mode:
@@ -51,8 +43,8 @@ def listen_fuel():
         thread.start()
 
 def get_fuel_level():
-    return sim_fuel_level if simulation_mode else latest_fuel_level
+    return sim_fuel_level
 
-def set_sim_fuel_level(level):
+def set_sim_fuel_level(value):
     global sim_fuel_level
-    sim_fuel_level = int(level)
+    sim_fuel_level = int(value)
