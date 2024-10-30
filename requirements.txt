@@ -1,3 +1,4 @@
 Pillow==11.0.0
 cairosvg==2.7.1
 svgpathtools==1.2.4
+Adafruit_ADS1x15==1.0.2

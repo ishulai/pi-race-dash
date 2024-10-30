@@ -3,13 +3,15 @@ import tkinter as tk
 from src.helpers import calculate_gear
 from src.ui.signals import render_left_signal, render_right_signal, update_signal
 from src.ui.rpm import render_rpm_bar, update_rpm_bar
-from src.ui.textgauge import render_textgauge_large, render_textgauge_small, update_textgauge_value
+from src.ui.textgauge import render_textgauge_large, render_textgauge_small, update_textgauge_value_large, update_textgauge_value_small
 from src.ui.simulation import open_simulation_window
 from src.ui.fuelswitch import render_low_fuel_symbol, update_low_fuel_symbol
 from src.data.rpm import listen_rpm, get_rpm
 from src.data.speed import listen_speed, get_speed
 from src.data.signals import listen_signals, get_left_signal, get_right_signal
 from src.data.fuelswitch import listen_fuel_switch, get_fuel_switch_state
+from src.data.tempsensor import listen_temp, get_temp
+from src.data.fuellevel import listen_fuel, get_fuel_level
 
 simulation_mode = os.environ.get("SIMULATION_MODE") != None
 
@@ -31,34 +33,48 @@ def start(root):
     
     rpm_bar, rpm_bar_fill = render_rpm_bar(root, max_rpm, redline_rpm, rpm_bar_y)
 
+    # Large text gauges without unit labels
     rpm_label, rpm_label_value = render_textgauge_large(root, "RPM", 40, row1_y)
     speed_label, speed_label_value = render_textgauge_large(root, "MPH", 340, row1_y)
     gear_label, gear_label_value = render_textgauge_large(root, "GEAR", 640, row1_y, "N")
 
-    water_temp_label, water_temp_label_value = render_textgauge_small(root, "WATER TEMP", "°F", 40, row2_y)
-    oil_temp_label, oil_temp_label_value = render_textgauge_small(root, "OIL TEMP", "°F", 240, row2_y)
-    oil_pressure_label, oil_pressure_label_value = render_textgauge_small(root, "OIL PRESSURE", "PSI", 440, row2_y)
-    fuel_label, fuel_label_value = render_textgauge_small(root, "FUEL", "KG", 640, row2_y)
+    # Small text gauges with unit labels
+    water_temp_label, water_temp_label_value, water_temp_unit_label = render_textgauge_small(root, "WATER TEMP", "°F", 40, row2_y)
+    oil_temp_label, oil_temp_label_value, oil_temp_unit_label = render_textgauge_small(root, "OIL TEMP", "°F", 240, row2_y)
+    oil_pressure_label, oil_pressure_label_value, oil_pressure_unit_label = render_textgauge_small(root, "OIL PRESSURE", "PSI", 440, row2_y)
+    fuel_label, fuel_label_value, fuel_unit_label = render_textgauge_small(root, "FUEL", "%", 640, row2_y)
 
     fuel_switch_canvas, fuel_switch_image_item, fuel_switch_image = render_low_fuel_symbol(root, 700, row2_y)
 
     def update_ui():
+        # Update RPM and speed gauges
         rpm_value = get_rpm()
         update_rpm_bar(rpm_bar, rpm_value, max_rpm)
-        update_textgauge_value(rpm_label_value, rpm_value)
+        update_textgauge_value_large(root, rpm_label_value, rpm_value)
 
         speed_value = get_speed()
-        gear_value = calculate_gear(speed_value, rpm_value)
-        update_textgauge_value(speed_label_value, speed_value)
-        update_textgauge_value(gear_label_value, gear_value)
+        update_textgauge_value_large(root, speed_label_value, speed_value)
 
+        # Update gear gauge
+        gear_value = calculate_gear(speed_value, rpm_value)
+        update_textgauge_value_large(root, gear_label_value, gear_value)
+
+        # Update turn signal states
         left_signal_on = get_left_signal()
         right_signal_on = get_right_signal()
         update_signal(left_signal_canvas, left_arrow, left_signal_on)
         update_signal(right_signal_canvas, right_arrow, right_signal_on)
 
+        # Update low fuel symbol
         fuel_switch_on = get_fuel_switch_state()
         update_low_fuel_symbol(fuel_switch_canvas, fuel_switch_image_item, fuel_switch_on)
+
+        # Update water temperature and fuel level
+        water_temp = get_temp()
+        update_textgauge_value_small(root, water_temp_label_value, water_temp, water_temp_unit_label)
+        
+        fuel_level = get_fuel_level()
+        update_textgauge_value_small(root, fuel_label_value, fuel_level, fuel_unit_label)
 
         root.after(100, update_ui)
 
@@ -75,6 +91,8 @@ if __name__ == "__main__":
         listen_speed(chip.get_line(27))
         listen_signals(chip.get_line(5), chip.get_line(6))
         listen_fuel_switch(chip.get_line(23))
+        listen_temp()
+        listen_fuel()
     else:
         open_simulation_window(root, 9000, 150)
 
