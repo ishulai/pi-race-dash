@@ -36,16 +36,16 @@ def start_cli():
             fuel_level = get_fuel_level()  # Get the fuel level percentage
 
             # Clear the terminal and display updated values
-            print("\033[H\033[J", end="")
-            print(f"RPM: {rpm_value}")
-            print(f"Speed: {speed_value} MPH")
-            print(f"Gear: {gear_value}")
-            print(f"Left Signal: {'On' if left_signal_on else 'Off'}")
-            print(f"Right Signal: {'On' if right_signal_on else 'Off'}")
-            print(f"Low Fuel: {'On' if fuel_switch_on else 'Off'}")
-            print(f"Water Temp: {temp_value}°F" if simulation_mode else "Water Temp: {temp_value}°C")
+            # print("\033[H\033[J", end="")
+            # print(f"RPM: {rpm_value}")
+            # print(f"Speed: {speed_value} MPH")
+            # print(f"Gear: {gear_value}")
+            # print(f"Left Signal: {'On' if left_signal_on else 'Off'}")
+            # print(f"Right Signal: {'On' if right_signal_on else 'Off'}")
+            # print(f"Low Fuel: {'On' if fuel_switch_on else 'Off'}")
+            # print(f"Water Temp: {temp_value}°F" if simulation_mode else "Water Temp: {temp_value}°C")
             print(f"Fuel Level: {fuel_level}%")
-            print("-" * 50)
+            # print("-" * 50)
 
             time.sleep(0.1)  # Update every second for temperature and fuel level
 
