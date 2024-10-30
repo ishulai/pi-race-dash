@@ -8,6 +8,8 @@ from src.data.rpm import listen_rpm, get_rpm
 from src.data.speed import listen_speed, get_speed
 from src.data.signals import listen_signals, get_left_signal, get_right_signal
 from src.data.fuelswitch import listen_fuel_switch, get_fuel_switch_state
+from src.data.tempsensor import listen_temp, get_temp
+from src.data.fuellevel import listen_fuel, get_fuel_level
 
 simulation_mode = os.environ.get("SIMULATION_MODE") != None
 
@@ -19,6 +21,8 @@ def start_cli():
         listen_speed(chip.get_line(27))
         listen_signals(chip.get_line(5), chip.get_line(6))
         listen_fuel_switch(chip.get_line(23))
+        listen_temp()  # Start listening for temperature data
+        listen_fuel()  # Start listening for fuel level data
 
     def log_signals():
         while True:
@@ -28,17 +32,22 @@ def start_cli():
             left_signal_on = get_left_signal()
             right_signal_on = get_right_signal()
             fuel_switch_on = get_fuel_switch_state()
+            temp_value = get_temp()  # Get the temperature value
+            fuel_level = get_fuel_level()  # Get the fuel level percentage
 
-            # print("\033[H\033[J", end="")  # Clears the terminal
-            # print(f"RPM: {rpm_value}")
+            # Clear the terminal and display updated values
+            print("\033[H\033[J", end="")
+            print(f"RPM: {rpm_value}")
             print(f"Speed: {speed_value} MPH")
-            # print(f"Gear: {gear_value}")
-            # print(f"Left Signal: {'On' if left_signal_on else 'Off'}")
-            # print(f"Right Signal: {'On' if right_signal_on else 'Off'}")
-            # print(f"Low Fuel: {'On' if fuel_switch_on else 'Off'}")
-            # print("-" * 50)
+            print(f"Gear: {gear_value}")
+            print(f"Left Signal: {'On' if left_signal_on else 'Off'}")
+            print(f"Right Signal: {'On' if right_signal_on else 'Off'}")
+            print(f"Low Fuel: {'On' if fuel_switch_on else 'Off'}")
+            print(f"Water Temp: {temp_value}°F" if simulation_mode else "Water Temp: {temp_value}°C")
+            print(f"Fuel Level: {fuel_level}%")
+            print("-" * 50)
 
-            time.sleep(0.1)
+            time.sleep(0.1)  # Update every second for temperature and fuel level
 
     if simulation_mode:
         root = tk.Tk()
