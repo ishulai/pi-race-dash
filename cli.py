@@ -43,7 +43,7 @@ def start_cli():
             print(f"Left Signal: {'On' if left_signal_on else 'Off'}")
             print(f"Right Signal: {'On' if right_signal_on else 'Off'}")
             print(f"Low Fuel: {'On' if fuel_switch_on else 'Off'}")
-            print(f"Water Temp: {temp_value}°F" if simulation_mode else "Water Temp: {temp_value}°C")
+            print(f"Water Temp: {temp_value}°C")
             print(f"Fuel Level: {fuel_level}%")
             print("-" * 50)
 
