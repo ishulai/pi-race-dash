@@ -22,10 +22,10 @@ def read_fuel():
         
         # Read voltage and calculate resistance
         raw_value = adc.readADC(adc_channel)
-
-        resistance = (fuel_resistor * raw_value) / (3.3 - raw_value)
-        print("raw value")
-        print(raw_value)
+        voltage = adc.toVoltage(raw_value)
+        resistance = (fuel_resistor * voltage) / (3.3 - voltage)
+        print("voltage")
+        print(voltage)
         print("resistance")
         print(resistance)
         # Convert resistance to fuel level percentage
