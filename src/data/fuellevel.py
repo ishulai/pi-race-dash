@@ -3,34 +3,27 @@ import threading
 import time
 
 simulation_mode = os.environ.get("SIMULATION_MODE") != None
-update_interval = 1.0  # Update every 1 second
-adc_channel = 0  # Channel where the fuel level sensor is connected
-fuel_resistor = 10  # Adjust this based on your divider design
-sim_fuel_level = 0
+update_interval = 1.0
+adc_channel = 0
+fuel_resistor = 10
+fuel_level_percent = 0
 
 def read_fuel():
     if not simulation_mode:
         from ADS1x15 import ADS1115
-        adc = ADS1115(1)  # Initialize ADS1115 on I2C bus 1
-        adc.setGain(2)    # Set gain for expected input range, adjust as needed
+        adc = ADS1115(1)
+        adc.setGain(2)
 
-    global sim_fuel_level
+    global fuel_level_percent
     while True:
         if simulation_mode:
             time.sleep(update_interval)
             continue
         
-        # Read voltage and calculate resistance
         raw_value = adc.readADC(adc_channel)
         voltage = adc.toVoltage(raw_value)
         resistance = (fuel_resistor * voltage) / (3.3 - voltage)
-        print("voltage")
-        print(voltage)
-        print("resistance")
-        print(resistance)
-        # Convert resistance to fuel level percentage
         fuel_level_percent = resistance_to_fuel_level(resistance)
-        sim_fuel_level = fuel_level_percent
         
         time.sleep(update_interval)
 
@@ -50,8 +43,8 @@ def listen_fuel():
         thread.start()
 
 def get_fuel_level():
-    return sim_fuel_level
+    return fuel_level_percent
 
 def set_sim_fuel_level(value):
-    global sim_fuel_level
-    sim_fuel_level = int(value)
+    global fuel_level_percent
+    fuel_level_percent = value
