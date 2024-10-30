@@ -37,9 +37,9 @@ def resistance_to_temp(resistance):
     # temperature_kelvin = constant / math.log(resistance / coefficient)
     # temperature_celsius = temperature_kelvin - 273.15
     # return temperature_celsius
-    A = 1.296493335e-3
-    B = 2.602163133e-4
-    C = 1.644941090e-7
+    A = 1.743591812e-3
+    B = 2.413388475e-4
+    C = 1.391160959e-7
     temperature_kelvin = 1 / (A + B * math.log(resistance) + C * math.pow(math.log(resistance), 3))
     temperature_celsius = temperature_kelvin - 273.15
     return temperature_celsius
