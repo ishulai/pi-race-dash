@@ -32,9 +32,15 @@ def read_temp():
 
 def resistance_to_temp(resistance):
     # https://www.r3vlimited.com/board/forum/e30-technical-forums/general-technical/200903-coolant-temp-sensor-resistance-curve
-    coefficient = 0.00134876
-    constant = 3842.49
-    temperature_kelvin = constant / math.log(resistance / coefficient)
+    # coefficient = 0.00134876
+    # constant = 3842.49
+    # temperature_kelvin = constant / math.log(resistance / coefficient)
+    # temperature_celsius = temperature_kelvin - 273.15
+    # return temperature_celsius
+    A = 1.296493335e-3
+    B = 2.602163133e-4
+    C = 1.644941090e-7
+    temperature_kelvin = 1 / (A + B * math.log(resistance) + C * math.pow(math.log(resistance), 3))
     temperature_celsius = temperature_kelvin - 273.15
     return temperature_celsius
 
