@@ -1,4 +1,5 @@
 import os
+import math
 import tkinter as tk
 from src.helpers import calculate_gear
 from src.ui.signals import render_left_signal, render_right_signal, update_signal
@@ -70,10 +71,10 @@ def start(root):
         update_low_fuel_symbol(fuel_switch_canvas, fuel_switch_image_item, fuel_switch_on)
 
         # Update water temperature and fuel level
-        water_temp = get_temp()
+        water_temp = math.floor(get_temp())
         update_textgauge_value_small(root, water_temp_label_value, water_temp, water_temp_unit_label)
         
-        fuel_level = get_fuel_level()
+        fuel_level = math.floor(get_fuel_level())
         update_textgauge_value_small(root, fuel_label_value, fuel_level, fuel_unit_label)
 
         root.after(100, update_ui)

@@ -7,7 +7,7 @@ simulation_mode = os.environ.get("SIMULATION_MODE") != None
 update_interval = 1.0
 adc_channel = 1
 temp_resistor = 470
-temp_celsius = True
+temp_celsius = False
 temperature_c = 0
 
 def read_temp():

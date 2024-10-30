@@ -1,5 +1,4 @@
 import tkinter as tk
-import math  # Import math for the floor function
 
 font_family = "URW Gothic"
 
@@ -25,13 +24,11 @@ def render_textgauge_small(root, label, unit, x, y):
 
 def update_textgauge_value_large(root, value_label, value):
     """Update value for large text gauge without a unit label."""
-    floored_value = math.floor(value)
-    value_label.config(text=f"{floored_value}")
+    value_label.config(text=f"{value}")
 
 def update_textgauge_value_small(root, value_label, value, unit_label):
     """Update value for small text gauge with a unit label."""
-    floored_value = math.floor(value)
-    value_label.config(text=f"{floored_value}")
+    value_label.config(text=f"{value}")
 
     root.update_idletasks()  
     value_width = value_label.winfo_reqwidth()
