@@ -3,7 +3,7 @@ import threading
 import time
 
 simulation_mode = os.environ.get("SIMULATION_MODE") != None
-update_interval = 1.0
+update_interval = 0.1
 adc_channel = 0
 fuel_resistor = 10
 fuel_level_percent = 0
