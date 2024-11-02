@@ -20,6 +20,8 @@ def read_oil_pressure():
             time.sleep(update_interval)
             continue
         
+        global oil_pressure
+        
         raw_value = adc.readADC(3)
         voltage = adc.toVoltage(raw_value)
         oil_pressure = voltage_to_pressure(voltage)
