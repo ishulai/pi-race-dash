@@ -22,10 +22,10 @@ def start_cli():
         listen_speed(chip.get_line(27))
         listen_signals(chip.get_line(5), chip.get_line(6))
         listen_fuel_switch(chip.get_line(23))
-        listen_fuel()
-        listen_temp(1, True)
+        # listen_fuel()
+        # listen_temp(1, True)
         listen_temp(2, False)
-        listen_oil_pressure()
+        #listen_oil_pressure()
 
     def log_signals():
         while True:
