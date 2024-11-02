@@ -3,7 +3,7 @@ import threading
 import time
 import math
 
-update_interval = 0.1
+update_interval = 1
 temp_resistor = 470
 temp_celsius = False
 temperature_c = {
@@ -28,6 +28,13 @@ def read():
         voltage = adc.toVoltage(raw_value)
         resistance = (fuel_resistor * voltage) / (3.3 - voltage)
         fuel_level_percent = resistance_to_fuel_level(resistance)
+
+        print("\033[H\033[J", end="")
+        print(f"Fuel Level: {fuel_level_percent}%")
+        print(f"Water Temp: {temperature_c[1]}°C")
+        print(f"Oil Temp: {temperature_c[2]}°C")
+        print(f"Oil Pressure: {oil_pressure} psi")
+        print("-" * 50)
         
         time.sleep(update_interval)
         
@@ -35,6 +42,13 @@ def read():
         voltage = adc.toVoltage(raw_value)
         resistance = (fuel_resistor * voltage) / (3.3 - voltage)
         temperature_c[1] = resistance_to_temp(resistance, True)
+
+        print("\033[H\033[J", end="")
+        print(f"Fuel Level: {fuel_level_percent}%")
+        print(f"Water Temp: {temperature_c[1]}°C")
+        print(f"Oil Temp: {temperature_c[2]}°C")
+        print(f"Oil Pressure: {oil_pressure} psi")
+        print("-" * 50)
         
         time.sleep(update_interval)
         
@@ -42,6 +56,13 @@ def read():
         voltage = adc.toVoltage(raw_value)
         resistance = (fuel_resistor * voltage) / (3.3 - voltage)
         temperature_c[2] = resistance_to_temp(resistance, False)
+
+        print("\033[H\033[J", end="")
+        print(f"Fuel Level: {fuel_level_percent}%")
+        print(f"Water Temp: {temperature_c[1]}°C")
+        print(f"Oil Temp: {temperature_c[2]}°C")
+        print(f"Oil Pressure: {oil_pressure} psi")
+        print("-" * 50)
         
         time.sleep(update_interval)
         
