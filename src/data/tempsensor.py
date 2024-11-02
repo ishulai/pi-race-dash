@@ -4,7 +4,7 @@ import time
 import math
 
 simulation_mode = os.environ.get("SIMULATION_MODE") != None
-update_interval = 0.1
+update_interval = 5
 temp_resistor = 470
 temp_celsius = False
 temperature_c = {
