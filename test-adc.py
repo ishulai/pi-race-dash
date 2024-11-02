@@ -3,7 +3,7 @@ import threading
 import time
 import math
 
-update_interval = 1
+update_interval = 0.2
 temp_resistor = 470
 temp_celsius = False
 temperature_c = {
