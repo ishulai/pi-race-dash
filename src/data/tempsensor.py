@@ -7,7 +7,10 @@ simulation_mode = os.environ.get("SIMULATION_MODE") != None
 update_interval = 0.1
 temp_resistor = 470
 temp_celsius = False
-temperature_c = dict()
+temperature_c = {
+    1: 0,
+    2: 0
+}
 
 def read_temp(adc_channel, stock_sensor):
     if not simulation_mode:

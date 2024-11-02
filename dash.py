@@ -14,6 +14,7 @@ from src.data.signals import listen_signals, get_left_signal, get_right_signal
 from src.data.fuelswitch import listen_fuel_switch, get_fuel_switch_state
 from src.data.tempsensor import listen_temp, get_temp
 from src.data.fuellevel import listen_fuel, get_fuel_level
+from src.data.oilpressure import listen_oil_pressure, get_oil_pressure
 
 simulation_mode = os.environ.get("SIMULATION_MODE") != None
 
@@ -86,6 +87,9 @@ def start(root):
         oil_temp = math.floor(get_temp(ADC_OIL_TEMP))
         update_textgauge_value_small(root, oil_temp_label_value, oil_temp, oil_temp_unit_label)
 
+        oil_pressure = math.floor(get_oil_pressure())
+        update_textgauge_value_small(root, oil_pressure_label_value, oil_pressure, oil_pressure_unit_label)
+
         update_mileage(root, mileage_label_value, 30000.6, mileage_label)
 
         root.after(100, update_ui)
@@ -106,6 +110,7 @@ if __name__ == "__main__":
         listen_fuel()
         listen_temp(1, True)  # water temp
         listen_temp(2, False) # oil temp
+        listen_oil_pressure()
     else:
         open_simulation_window(root, 9000, 150)
 

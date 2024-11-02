@@ -10,6 +10,7 @@ from src.data.signals import listen_signals, get_left_signal, get_right_signal
 from src.data.fuelswitch import listen_fuel_switch, get_fuel_switch_state
 from src.data.tempsensor import listen_temp, get_temp
 from src.data.fuellevel import listen_fuel, get_fuel_level
+from src.data.oilpressure import listen_oil_pressure, get_oil_pressure
 
 simulation_mode = os.environ.get("SIMULATION_MODE") != None
 
@@ -21,8 +22,10 @@ def start_cli():
         listen_speed(chip.get_line(27))
         listen_signals(chip.get_line(5), chip.get_line(6))
         listen_fuel_switch(chip.get_line(23))
-        listen_temp()  # Start listening for temperature data
-        listen_fuel()  # Start listening for fuel level data
+        listen_fuel()
+        listen_temp(1, True)
+        listen_temp(2, False)
+        listen_oil_pressure()
 
     def log_signals():
         while True:
@@ -32,8 +35,10 @@ def start_cli():
             left_signal_on = get_left_signal()
             right_signal_on = get_right_signal()
             fuel_switch_on = get_fuel_switch_state()
-            temp_value = get_temp()  # Get the temperature value
-            fuel_level = get_fuel_level()  # Get the fuel level percentage
+            fuel_level = get_fuel_level()
+            water_temp = get_temp(1)
+            oil_temp = get_temp(2)
+            oil_pressure = get_oil_pressure()
 
             # Clear the terminal and display updated values
             print("\033[H\033[J", end="")
@@ -43,8 +48,10 @@ def start_cli():
             print(f"Left Signal: {'On' if left_signal_on else 'Off'}")
             print(f"Right Signal: {'On' if right_signal_on else 'Off'}")
             print(f"Low Fuel: {'On' if fuel_switch_on else 'Off'}")
-            print(f"Water Temp: {temp_value}°C")
             print(f"Fuel Level: {fuel_level}%")
+            print(f"Water Temp: {water_temp}°C")
+            print(f"Oil Temp: {oil_temp}°C")
+            print(f"Oil Pressure: {oil_pressure} psi")
             print("-" * 50)
 
             time.sleep(0.1)  # Update every second for temperature and fuel level
