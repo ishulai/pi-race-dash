@@ -12,7 +12,6 @@ def read_fuel():
     if not simulation_mode:
         from ADS1x15 import ADS1115
         adc = ADS1115(1)
-        adc.setGain(2)
 
     global fuel_level_percent
     while True:

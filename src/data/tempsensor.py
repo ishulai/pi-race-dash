@@ -16,7 +16,6 @@ def read_temp(adc_channel, stock_sensor):
     if not simulation_mode:
         from ADS1x15 import ADS1115
         adc = ADS1115(1)
-        adc.setGain(2)
 
     while True:
         if simulation_mode:

@@ -13,7 +13,6 @@ def read_oil_pressure():
     if not simulation_mode:
         from ADS1x15 import ADS1115
         adc = ADS1115(1)
-        adc.setGain(0)
 
     while True:
         if simulation_mode:
