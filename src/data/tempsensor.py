@@ -11,6 +11,8 @@ sim_temp = {
 }
 
 def resistance_to_temp(resistance, stock_sensor):
+    if resistance <= 0:
+        return 0
     if stock_sensor:
       A = 1.743591812e-3
       B = 2.413388475e-4

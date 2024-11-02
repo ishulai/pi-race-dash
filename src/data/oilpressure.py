@@ -8,7 +8,8 @@ voltage_100_psi = 4.5
 sim_oil_pressure = 0
 
 def voltage_to_pressure(voltage):
-    return (voltage - voltage_0_psi) / (voltage_100_psi - voltage_0_psi) * 100
+    pressure = (voltage - voltage_0_psi) / (voltage_100_psi - voltage_0_psi) * 100
+    return max(0, pressure)
 
 def listen_oil_pressure():
     if not simulation_mode:
