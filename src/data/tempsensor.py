@@ -5,12 +5,11 @@ import math
 
 simulation_mode = os.environ.get("SIMULATION_MODE") != None
 update_interval = 0.1
-adc_channel = 1
 temp_resistor = 470
 temp_celsius = False
-temperature_c = 0
+temperature_c = dict()
 
-def read_temp():
+def read_temp(adc_channel, stock_sensor):
     if not simulation_mode:
         from ADS1x15 import ADS1115
         adc = ADS1115(1)
@@ -26,33 +25,33 @@ def read_temp():
         resistance = (temp_resistor * voltage) / (3.3 - voltage)
         
         global temperature_c
-        temperature_c = resistance_to_temp(resistance)
+        temperature_c[adc_channel] = resistance_to_temp(resistance, stock_sensor)
         
         time.sleep(update_interval)
 
-def resistance_to_temp(resistance):
-    # https://www.r3vlimited.com/board/forum/e30-technical-forums/general-technical/200903-coolant-temp-sensor-resistance-curve
-    # coefficient = 0.00134876
-    # constant = 3842.49
-    # temperature_kelvin = constant / math.log(resistance / coefficient)
-    # temperature_celsius = temperature_kelvin - 273.15
-    # return temperature_celsius
-    A = 1.743591812e-3
-    B = 2.413388475e-4
-    C = 1.391160959e-7
+def resistance_to_temp(resistance, stock_sensor):
+    if stock_sensor:
+      A = 1.743591812e-3
+      B = 2.413388475e-4
+      C = 1.391160959e-7
+    else:
+      A = 1.512189580e-3
+      B = 2.374512684e-4
+      C = -0.04684082023e-7
     temperature_kelvin = 1 / (A + B * math.log(resistance) + C * math.pow(math.log(resistance), 3))
     temperature_celsius = temperature_kelvin - 273.15
     return temperature_celsius
 
-def listen_temp():
+def listen_temp(adc_channel, stock_sensor = False):
     if not simulation_mode:
-        thread = threading.Thread(target=read_temp)
+        thread = threading.Thread(target=read_temp, args=(adc_channel, stock_sensor))
         thread.daemon = True
         thread.start()
 
-def get_temp():
-    return temperature_c if temp_celsius else (temperature_c * 9/5) + 32
+def get_temp(adc_channel):
+    t = temperature_c[adc_channel]
+    return t if temp_celsius else (t * 9/5) + 32
 
-def set_sim_temp(value):
+def set_sim_temp(adc_channel, value):
     global temperature_c
-    temperature_c = value
+    temperature_c[adc_channel] = float(value)

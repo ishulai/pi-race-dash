@@ -2,7 +2,7 @@ import tkinter as tk
 from .helpers import load_svg_to_image
 
 def render_low_fuel_symbol(root, x, y):
-    canvas = tk.Canvas(root, width=80, height=80, bg="black", highlightthickness=0)
+    canvas = tk.Canvas(root, width=60, height=80, bg="black", highlightthickness=0)
     canvas.place(x=x, y=y)
     fuel_image = load_svg_to_image("src/ui/assets/fuel.svg")
     fuel_image_item = canvas.create_image(40, 40, image=fuel_image)

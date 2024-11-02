@@ -5,7 +5,7 @@ import time
 simulation_mode = os.environ.get("SIMULATION_MODE") != None
 update_interval = 0.1
 adc_channel = 0
-fuel_resistor = 10
+fuel_resistor = 100
 fuel_level_percent = 0
 
 def read_fuel():
@@ -47,4 +47,4 @@ def get_fuel_level():
 
 def set_sim_fuel_level(value):
     global fuel_level_percent
-    fuel_level_percent = value
+    fuel_level_percent = float(value)
