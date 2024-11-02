@@ -22,10 +22,10 @@ def start_cli():
         listen_speed(chip.get_line(27))
         listen_signals(chip.get_line(5), chip.get_line(6))
         listen_fuel_switch(chip.get_line(23))
-        # listen_fuel()
-        # listen_temp(1, True)
-        listen_temp(2, False)
-        #listen_oil_pressure()
+        listen_fuel()
+        listen_temp(1)
+        listen_temp(2)
+        listen_oil_pressure()
 
     def log_signals():
         while True:
@@ -36,8 +36,8 @@ def start_cli():
             right_signal_on = get_right_signal()
             fuel_switch_on = get_fuel_switch_state()
             fuel_level = get_fuel_level()
-            water_temp = get_temp(1)
-            oil_temp = get_temp(2)
+            water_temp = get_temp(1, True)
+            oil_temp = get_temp(2, False)
             oil_pressure = get_oil_pressure()
 
             # Clear the terminal and display updated values

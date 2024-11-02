@@ -81,10 +81,10 @@ def start(root):
         fuel_level = math.floor(get_fuel_level())
         update_textgauge_value_small(root, fuel_label_value, fuel_level, fuel_unit_label)
 
-        water_temp = math.floor(get_temp(ADC_WATER_TEMP))
+        water_temp = math.floor(get_temp(ADC_WATER_TEMP, True))
         update_textgauge_value_small(root, water_temp_label_value, water_temp, water_temp_unit_label)
 
-        oil_temp = math.floor(get_temp(ADC_OIL_TEMP))
+        oil_temp = math.floor(get_temp(ADC_OIL_TEMP, False))
         update_textgauge_value_small(root, oil_temp_label_value, oil_temp, oil_temp_unit_label)
 
         oil_pressure = math.floor(get_oil_pressure())
@@ -108,8 +108,8 @@ if __name__ == "__main__":
         listen_signals(chip.get_line(5), chip.get_line(6))
         listen_fuel_switch(chip.get_line(23))
         listen_fuel()
-        listen_temp(1, True)  # water temp
-        listen_temp(2, False) # oil temp
+        listen_temp(1)  # water temp
+        listen_temp(2) # oil temp
         listen_oil_pressure()
     else:
         open_simulation_window(root, 9000, 150)
