@@ -19,6 +19,9 @@ oil_pressure = 0
 from ADS1x15 import ADS1115
 adc = ADS1115(1)
 
+adc.setMode(adc.MODE_SINGLE)
+adc.setGain(0)
+
 def read():
     global temperature_c
     global fuel_level_percent
