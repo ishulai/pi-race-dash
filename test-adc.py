@@ -29,15 +29,21 @@ def read():
         resistance = (fuel_resistor * voltage) / (3.3 - voltage)
         fuel_level_percent = resistance_to_fuel_level(resistance)
         
+        time.sleep(update_interval)
+        
         raw_value = adc.readADC(1)
         voltage = adc.toVoltage(raw_value)
         resistance = (fuel_resistor * voltage) / (3.3 - voltage)
         temperature_c[1] = resistance_to_temp(resistance, True)
         
+        time.sleep(update_interval)
+        
         raw_value = adc.readADC(2)
         voltage = adc.toVoltage(raw_value)
         resistance = (fuel_resistor * voltage) / (3.3 - voltage)
         temperature_c[2] = resistance_to_temp(resistance, False)
+        
+        time.sleep(update_interval)
         
         raw_value = adc.readADC(3)
         voltage = adc.toVoltage(raw_value)
