@@ -15,6 +15,7 @@ from src.data.fuelswitch import listen_fuel_switch, get_fuel_switch_state
 from src.data.tempsensor import listen_temp, get_temp
 from src.data.fuellevel import listen_fuel, get_fuel_level
 from src.data.oilpressure import listen_oil_pressure, get_oil_pressure
+from src.data.ignition import listen_ignition, get_ignition_state
 
 simulation_mode = os.environ.get("SIMULATION_MODE") != None
 
@@ -23,6 +24,8 @@ max_rpm = 9000
 
 ADC_WATER_TEMP = 1
 ADC_OIL_TEMP = 2
+
+last_ignition_state = 0
 
 def start(root):
     root.title("Dash")
@@ -56,6 +59,15 @@ def start(root):
     mileage_label, mileage_label_value = render_mileage(root, 40, row3_y)
 
     def update_ui():
+        global last_ignition_state
+
+        # Shutdown system if car is off
+        ignition_state = get_ignition_state()
+        if ignition_state == 0 and last_ignition_state == 1:
+            os.system("sudo shutdown -h now")
+        else:
+            last_ignition_state = ignition_state
+
         # Update RPM and speed gauges
         rpm_value = get_rpm()
         update_rpm_bar(rpm_bar, rpm_value, max_rpm)
@@ -111,6 +123,7 @@ if __name__ == "__main__":
         listen_temp(1)  # water temp
         listen_temp(2) # oil temp
         listen_oil_pressure()
+        listen_ignition()
     else:
         open_simulation_window(root, 9000, 150)
 
