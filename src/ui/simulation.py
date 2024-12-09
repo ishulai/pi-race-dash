@@ -7,6 +7,7 @@ from src.data.fuelswitch import set_sim_fuel_switch  # Import the fuel switch si
 from src.data.tempsensor import set_sim_temp  # Import the temperature simulation function
 from src.data.fuellevel import set_sim_fuel_level  # Import the fuel level simulation function
 from src.data.oilpressure import set_sim_oil_pressure
+from src.data.ignition import set_sim_ignition_state
 
 def open_simulation_window(root, max_rpm, max_speed):
     sim_window = tk.Toplevel(root)
@@ -50,3 +51,8 @@ def open_simulation_window(root, max_rpm, max_speed):
     # Oil Pressure Slider
     oil_pressure_slider = tk.Scale(sim_window, from_=0, to=100, orient=tk.HORIZONTAL, label="Oil Pressure (psi)", command=set_sim_oil_pressure)
     oil_pressure_slider.pack(fill=tk.X, padx=20, pady=10)
+
+    # Ignition Toggle
+    ignition_var = tk.IntVar()
+    ignition_toggle = tk.Checkbutton(sim_window, text="Acc/Run/Start", variable=ignition_var, command=lambda: set_sim_ignition_state(ignition_var.get()))
+    ignition_toggle.pack(fill=tk.X, padx=20, pady=5)

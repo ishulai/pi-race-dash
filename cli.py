@@ -11,6 +11,7 @@ from src.data.fuelswitch import listen_fuel_switch, get_fuel_switch_state
 from src.data.tempsensor import listen_temp, get_temp
 from src.data.fuellevel import listen_fuel, get_fuel_level
 from src.data.oilpressure import listen_oil_pressure, get_oil_pressure
+from src.data.ignition import listen_ignition, get_ignition_state
 
 simulation_mode = os.environ.get("SIMULATION_MODE") != None
 
@@ -26,6 +27,7 @@ def start_cli():
         listen_temp(1)
         listen_temp(2)
         listen_oil_pressure()
+        listen_ignition(chip.get_line(13))
 
     def log_signals():
         while True:
@@ -39,6 +41,7 @@ def start_cli():
             water_temp = get_temp(1, True)
             oil_temp = get_temp(2, False)
             oil_pressure = get_oil_pressure()
+            ignition_on = get_ignition_state()
 
             # Clear the terminal and display updated values
             print("\033[H\033[J", end="")
@@ -52,6 +55,7 @@ def start_cli():
             print(f"Water Temp: {water_temp}°C")
             print(f"Oil Temp: {oil_temp}°C")
             print(f"Oil Pressure: {oil_pressure} psi")
+            print(f"Acc/Run/Start: {'On' if ignition_on else 'Off'}")
             print("-" * 50)
 
             time.sleep(0.1)  # Update every second for temperature and fuel level

@@ -33,6 +33,6 @@ def get_ignition_state():
     else:
         return ignition_state
 
-def set_ignition_state(value):
+def set_sim_ignition_state(value):
     global sim_ignition
     sim_ignition = int(value)

@@ -64,7 +64,10 @@ def start(root):
         # Shutdown system if car is off
         ignition_state = get_ignition_state()
         if ignition_state == 0 and last_ignition_state == 1:
-            os.system("sudo shutdown -h now")
+            if simulation_mode:
+                print("Shutdown simulated")
+            else:
+                os.system("sudo shutdown -h now")
         else:
             last_ignition_state = ignition_state
 
@@ -123,7 +126,7 @@ if __name__ == "__main__":
         listen_temp(1)  # water temp
         listen_temp(2) # oil temp
         listen_oil_pressure()
-        listen_ignition()
+        listen_ignition(chip.get_line(13))
     else:
         open_simulation_window(root, 9000, 150)
 
