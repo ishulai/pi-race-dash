@@ -6,7 +6,7 @@ simulation_mode = os.environ.get("SIMULATION_MODE") != None
 
 display_interval = 0.1
 pulses_per_revolution = 3
-calculation_interval = 1.0
+calculation_interval = 0.2
 num_intervals = int(calculation_interval / display_interval)
 
 pulse_buffer = deque([0] * num_intervals, maxlen=num_intervals)
