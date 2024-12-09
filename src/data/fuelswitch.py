@@ -18,9 +18,9 @@ def read_fuel_switch(fuel_switch_line):
         if fuel_event:
             fuel_event = fuel_switch_line.event_read()
             if fuel_event.type == gpiod.LineEvent.FALLING_EDGE:
-                fuel_switch_state = 1
-            else:
                 fuel_switch_state = 0
+            else:
+                fuel_switch_state = 1
 
 def listen_fuel_switch(fuel_switch_line):
     thread = threading.Thread(target=read_fuel_switch, args=(fuel_switch_line,))

@@ -18,9 +18,9 @@ def read_ignition(ignition_line):
         if ignition_event:
             ignition_event = ignition_line.event_read()
             if ignition_event.type == gpiod.LineEvent.FALLING_EDGE:
-                ignition_state = 1
-            else:
                 ignition_state = 0
+            else:
+                ignition_state = 1
 
 def listen_ignition(ignition_line):
     thread = threading.Thread(target=read_ignition, args=(ignition_line,))
