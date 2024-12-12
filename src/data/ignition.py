@@ -13,14 +13,12 @@ def read_ignition(ignition_line):
 
     ignition_line.request(consumer="Ignition_Reader", type=gpiod.LINE_REQ_EV_BOTH_EDGES, flags=gpiod.LINE_REQ_FLAG_BIAS_PULL_UP)
 
+    ignition_state = ignition_line.get_value()
+
     while True:
         ignition_event = ignition_line.event_wait()
         if ignition_event:
-            ignition_event = ignition_line.event_read()
-            if ignition_event.type == gpiod.LineEvent.FALLING_EDGE:
-                ignition_state = 0
-            else:
-                ignition_state = 1
+            ignition_state = ignition_line.get_value()
 
 def listen_ignition(ignition_line):
     thread = threading.Thread(target=read_ignition, args=(ignition_line,))

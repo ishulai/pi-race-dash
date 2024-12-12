@@ -13,14 +13,12 @@ def read_fuel_switch(fuel_switch_line):
 
     fuel_switch_line.request(consumer="Fuel_Switch_Reader", type=gpiod.LINE_REQ_EV_BOTH_EDGES, flags=gpiod.LINE_REQ_FLAG_BIAS_PULL_UP)
 
+    fuel_switch_state = fuel_switch_line.get_value()
+
     while True:
         fuel_event = fuel_switch_line.event_wait()
         if fuel_event:
-            fuel_event = fuel_switch_line.event_read()
-            if fuel_event.type == gpiod.LineEvent.FALLING_EDGE:
-                fuel_switch_state = 0
-            else:
-                fuel_switch_state = 1
+            fuel_switch_state = fuel_switch_line.get_value()
 
 def listen_fuel_switch(fuel_switch_line):
     thread = threading.Thread(target=read_fuel_switch, args=(fuel_switch_line,))
