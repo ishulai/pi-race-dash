@@ -18,7 +18,7 @@ def read_fuel_switch(fuel_switch_line):
     while True:
         fuel_event = fuel_switch_line.event_wait()
         if fuel_event:
-            fuel_switch_state = fuel_switch_line.get_value()
+            fuel_switch_state = not fuel_switch_line.get_value()
 
 def listen_fuel_switch(fuel_switch_line):
     thread = threading.Thread(target=read_fuel_switch, args=(fuel_switch_line,))

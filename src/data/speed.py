@@ -23,7 +23,7 @@ def calculate_dynamic_debounce(speed):
     if speed > 0:
         pulses_per_second = (speed / 3600) * pulses_per_mi
         time_between_pulses = 1 / pulses_per_second
-        return max(time_between_pulses * 0.7, min_debounce_interval)
+        return max(time_between_pulses * 0.5, min_debounce_interval)
     else:
         return 0.1
     

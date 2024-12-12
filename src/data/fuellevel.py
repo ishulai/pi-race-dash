@@ -11,9 +11,8 @@ def resistance_to_fuel_level(resistance):
         (74, 0),           # Empty
         (35, 5/16 * 100),  # 5/16 tank
         (24, 1/2 * 100),   # 1/2 tank
-        (16, 5/8 * 100),   # 5/8 tank
-        (11, 3/4 * 100),   # 3/4 tank
-        (5, 100),          # Full
+        (16, 3/4 * 100),   # 3/4 tank
+        (7.4, 100),        # Full
     ]
     
     if resistance >= resistance_to_fuel[0][0]:
