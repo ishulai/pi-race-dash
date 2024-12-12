@@ -6,9 +6,9 @@ def calculate_gear(speed, rpm):
         return 5
     elif ratio < 55:
         return 4
-    elif ratio < 72:
+    elif ratio < 75:
         return 3
-    elif ratio < 110:
+    elif ratio < 115:
         return 2
     else:
         return 1
