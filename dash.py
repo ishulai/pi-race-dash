@@ -26,7 +26,7 @@ max_rpm = 9000
 ADC_WATER_TEMP = 1
 ADC_OIL_TEMP = 2
 
-last_ignition_state = 0
+last_stable_ignition_state = 0
 last_ignition_off_time = None
 
 def start(root):
@@ -61,7 +61,7 @@ def start(root):
     mileage_label, mileage_label_value = render_mileage(root, 40, row3_y)
 
     def update_ui():
-        global last_ignition_state, last_ignition_off_time
+        global last_stable_ignition_state, last_ignition_off_time
 
         # Shutdown system if car is off
         ignition_state = get_ignition_state()
@@ -69,15 +69,15 @@ def start(root):
             if last_ignition_off_time is None:
                 last_ignition_off_time = time.time()
             if time.time() - last_ignition_off_time >= 1:
-                if last_ignition_state == 1:
+                if last_stable_ignition_state == 1:
                     if simulation_mode:
                         print("Shutdown simulated")
                     else:
                         os.system("sudo shutdown -h now")
+                    last_stable_ignition_state = 0
         else:
             last_ignition_off_time = None
-        
-        last_ignition_state = ignition_state
+            last_stable_ignition_state = 1
 
         # Update RPM and speed gauges
         rpm_value = get_rpm()
