@@ -17,7 +17,7 @@ speed_count = 0
 
 sim_speed = 0
 
-min_debounce_interval = 0.002  # 2ms
+min_debounce_interval = 0.003  # 3ms
 
 def calculate_dynamic_debounce(speed):
     if speed > 0:
