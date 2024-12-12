@@ -1,5 +1,6 @@
 import os
 import math
+import time
 import tkinter as tk
 from src.helpers import calculate_gear
 from src.ui.signals import render_left_signal, render_right_signal, update_signal
@@ -26,6 +27,7 @@ ADC_WATER_TEMP = 1
 ADC_OIL_TEMP = 2
 
 last_ignition_state = 0
+last_ignition_off_time = None
 
 def start(root):
     root.title("Dash")
@@ -59,17 +61,23 @@ def start(root):
     mileage_label, mileage_label_value = render_mileage(root, 40, row3_y)
 
     def update_ui():
-        global last_ignition_state
+        global last_ignition_state, last_ignition_off_time
 
         # Shutdown system if car is off
         ignition_state = get_ignition_state()
-        if ignition_state == 0 and last_ignition_state == 1:
-            if simulation_mode:
-                print("Shutdown simulated")
-            else:
-                os.system("sudo shutdown -h now")
+        if ignition_state == 0:
+            if last_ignition_off_time is None:
+                last_ignition_off_time = time.time()
+            if time.time() - last_ignition_off_time >= 1:
+                if last_ignition_state == 1:
+                    if simulation_mode:
+                        print("Shutdown simulated")
+                    else:
+                        os.system("sudo shutdown -h now")
         else:
-            last_ignition_state = ignition_state
+            last_ignition_off_time = None
+        
+        last_ignition_state = ignition_state
 
         # Update RPM and speed gauges
         rpm_value = get_rpm()
