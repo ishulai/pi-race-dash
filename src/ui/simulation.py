@@ -3,16 +3,17 @@ import tkinter as tk
 from src.data.rpm import set_sim_rpm
 from src.data.speed import set_sim_speed
 from src.data.signals import set_sim_left_signal, set_sim_right_signal
-from src.data.fuelswitch import set_sim_fuel_switch  # Import the fuel switch simulation function
-from src.data.tempsensor import set_sim_temp  # Import the temperature simulation function
-from src.data.fuellevel import set_sim_fuel_level  # Import the fuel level simulation function
+from src.data.fuelswitch import set_sim_fuel_switch
+from src.data.tempsensor import set_sim_temp
+from src.data.fuellevel import set_sim_fuel_level
 from src.data.oilpressure import set_sim_oil_pressure
 from src.data.ignition import set_sim_ignition_state
+from src.data.clutchswitch import set_sim_clutch_switch
 
 def open_simulation_window(root, max_rpm, max_speed):
     sim_window = tk.Toplevel(root)
     sim_window.title("Simulation Controls")
-    sim_window.geometry("400x600")
+    sim_window.geometry("400x700")
     
     # RPM and Speed Sliders
     rpm_slider = tk.Scale(sim_window, from_=0, to=max_rpm, orient=tk.HORIZONTAL, label="RPM", command=set_sim_rpm)
@@ -56,3 +57,8 @@ def open_simulation_window(root, max_rpm, max_speed):
     ignition_var = tk.IntVar()
     ignition_toggle = tk.Checkbutton(sim_window, text="Acc/Run/Start", variable=ignition_var, command=lambda: set_sim_ignition_state(ignition_var.get()))
     ignition_toggle.pack(fill=tk.X, padx=20, pady=5)
+
+    # Clutch Toggle
+    clutch_var = tk.IntVar()
+    clutch_toggle = tk.Checkbutton(sim_window, text="Clutch", variable=clutch_var, command=lambda: set_sim_clutch_switch(clutch_var.get()))
+    clutch_toggle.pack(fill=tk.X, padx=20, pady=5)

@@ -17,6 +17,7 @@ from src.data.tempsensor import listen_temp, get_temp
 from src.data.fuellevel import listen_fuel, get_fuel_level
 from src.data.oilpressure import listen_oil_pressure, get_oil_pressure
 from src.data.ignition import listen_ignition, get_ignition_state
+from src.data.clutchswitch import listen_clutch_switch, get_clutch_switch_state
 
 simulation_mode = os.environ.get("SIMULATION_MODE") != None
 
@@ -88,7 +89,8 @@ def start(root):
         update_textgauge_value_large(root, speed_label_value, speed_value)
 
         # Update gear gauge
-        gear_value = calculate_gear(speed_value, rpm_value)
+        clutch = get_clutch_switch_state()
+        gear_value = calculate_gear(speed_value, rpm_value, clutch)
         update_textgauge_value_large(root, gear_label_value, gear_value)
 
         # Update turn signal states
