@@ -13,12 +13,12 @@ def read_clutch_switch(clutch_switch_line):
 
     clutch_switch_line.request(consumer="Clutch_Switch_Reader", type=gpiod.LINE_REQ_EV_BOTH_EDGES, flags=gpiod.LINE_REQ_FLAG_BIAS_PULL_UP)
 
-    clutch_switch_state = not clutch_switch_line.get_value()
+    clutch_switch_state = clutch_switch_line.get_value()
 
     while True:
         fuel_event = clutch_switch_line.event_wait()
         if fuel_event:
-            clutch_switch_state = not clutch_switch_line.get_value()
+            clutch_switch_state = clutch_switch_line.get_value()
 
 def listen_clutch_switch(clutch_switch_line):
     thread = threading.Thread(target=read_clutch_switch, args=(clutch_switch_line,))

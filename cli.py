@@ -35,7 +35,8 @@ def start_cli():
         while True:
             rpm_value = get_rpm()
             speed_value = get_speed()
-            gear_value = calculate_gear(speed_value, rpm_value)
+            clutch = get_clutch_switch_state()
+            gear_value = calculate_gear(speed_value, rpm_value, clutch)
             left_signal_on = get_left_signal()
             right_signal_on = get_right_signal()
             fuel_switch_on = get_fuel_switch_state()
@@ -44,7 +45,6 @@ def start_cli():
             oil_temp = get_temp(2, False)
             oil_pressure = get_oil_pressure()
             ignition_on = get_ignition_state()
-            clutch = get_clutch_switch_state()
 
             # Clear the terminal and display updated values
             print("\033[H\033[J", end="")
