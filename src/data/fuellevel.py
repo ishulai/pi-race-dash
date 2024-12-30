@@ -9,8 +9,9 @@ sim_fuel_level = 0
 def resistance_to_fuel_level(resistance):
     resistance_to_fuel = [
         (74, 0),           # Empty
-        (35, 5/16 * 100),  # 5/16 tank
-        (24, 1/2 * 100),   # 1/2 tank
+        # (35, 5/16 * 100),  # 5/16 tank
+        # (24, 1/2 * 100),   # 1/2 tank
+        (44, 68), # 68%
         (16, 3/4 * 100),   # 3/4 tank
         (7.4, 100),        # Full
     ]
