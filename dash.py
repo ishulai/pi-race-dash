@@ -145,8 +145,9 @@ if __name__ == "__main__":
         listen_temp(2) # oil temp
         listen_oil_pressure()
         listen_ignition(chip.get_line(13))
-        listen_clutch_switch(chip.get_line(26))
-        listen_abs(chip.get_line(22))
+        #listen_clutch_switch(chip.get_line(26))
+        #listen_abs(chip.get_line(22))
+        listen_abs(chip.get_line(26)) # temp - use clutch input for abs
     else:
         open_simulation_window(root, 9000, 150)
 
