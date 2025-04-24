@@ -30,6 +30,7 @@ def start_cli():
         listen_oil_pressure()
         listen_ignition(chip.get_line(13))
         listen_clutch_switch(chip.get_line(26))
+        listen_abs(chip.get_line(22))
 
     def log_signals():
         while True:

@@ -11,7 +11,7 @@ def render_low_fuel_symbol(root, x, y):
         image_path = "src/ui/assets/fuel.svg"
     else:
         image_path = "pi-race-dash/src/ui/assets/fuel.svg"
-    fuel_image = load_svg_to_image(image_path)
+    fuel_image = load_svg_to_image(image_path, (40, 40))
     fuel_image_item = canvas.create_image(40, 40, image=fuel_image)
 
     return canvas, fuel_image_item, fuel_image

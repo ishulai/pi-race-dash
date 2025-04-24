@@ -9,6 +9,7 @@ from src.data.fuellevel import set_sim_fuel_level
 from src.data.oilpressure import set_sim_oil_pressure
 from src.data.ignition import set_sim_ignition_state
 from src.data.clutchswitch import set_sim_clutch_switch
+from src.data.abs import set_sim_abs
 
 def open_simulation_window(root, max_rpm, max_speed):
     sim_window = tk.Toplevel(root)
@@ -62,3 +63,8 @@ def open_simulation_window(root, max_rpm, max_speed):
     clutch_var = tk.IntVar()
     clutch_toggle = tk.Checkbutton(sim_window, text="Clutch", variable=clutch_var, command=lambda: set_sim_clutch_switch(clutch_var.get()))
     clutch_toggle.pack(fill=tk.X, padx=20, pady=5)
+
+    # ABS Toggle
+    abs_var = tk.IntVar()
+    abs_toggle = tk.Checkbutton(sim_window, text="ABS", variable=abs_var, command=lambda: set_sim_abs(abs_var.get()))
+    abs_toggle.pack(fill=tk.X, padx=20, pady=5)

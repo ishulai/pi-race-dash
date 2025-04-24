@@ -9,6 +9,7 @@ from src.ui.textgauge import render_textgauge_large, render_textgauge_small, upd
 from src.ui.simulation import open_simulation_window
 from src.ui.fuelswitch import render_low_fuel_symbol, update_low_fuel_symbol
 from src.ui.mileage import render_mileage, update_mileage
+from src.ui.abs import render_abs_symbol, update_abs_symbol
 from src.data.rpm import listen_rpm, get_rpm
 from src.data.speed import listen_speed, get_speed
 from src.data.signals import listen_signals, get_left_signal, get_right_signal
@@ -18,6 +19,7 @@ from src.data.fuellevel import listen_fuel, get_fuel_level
 from src.data.oilpressure import listen_oil_pressure, get_oil_pressure
 from src.data.ignition import listen_ignition, get_ignition_state
 from src.data.clutchswitch import listen_clutch_switch, get_clutch_switch_state
+from src.data.abs import listen_abs, get_abs_state
 
 simulation_mode = os.environ.get("SIMULATION_MODE") != None
 
@@ -40,6 +42,8 @@ def start(root):
     row1_y = 170
     row2_y = 310
     row3_y = 420
+
+    abs_canvas, abs_image_item, abs_image = render_abs_symbol(root, 180, signal_y)
     
     left_signal_canvas, left_arrow = render_left_signal(root, 300, signal_y)
     right_signal_canvas, right_arrow = render_right_signal(root, 420, signal_y)
@@ -57,7 +61,7 @@ def start(root):
     oil_pressure_label, oil_pressure_label_value, oil_pressure_unit_label = render_textgauge_small(root, "OIL PRESSURE", "PSI", 440, row2_y)
     fuel_label, fuel_label_value, fuel_unit_label = render_textgauge_small(root, "FUEL", "%", 640, row2_y)
 
-    fuel_switch_canvas, fuel_switch_image_item, fuel_switch_image = render_low_fuel_symbol(root, 725, row2_y)
+    fuel_switch_canvas, fuel_switch_image_item, fuel_switch_image = render_low_fuel_symbol(root, 700, row2_y)
 
     mileage_label, mileage_label_value = render_mileage(root, 40, row3_y)
 
@@ -92,6 +96,10 @@ def start(root):
         clutch = get_clutch_switch_state()
         gear_value = calculate_gear(speed_value, rpm_value, clutch)
         update_textgauge_value_large(root, gear_label_value, gear_value)
+
+        # Update ABS icon
+        abs_on = get_abs_state()
+        update_abs_symbol(abs_canvas, abs_image_item, abs_on)
 
         # Update turn signal states
         left_signal_on = get_left_signal()
@@ -137,6 +145,8 @@ if __name__ == "__main__":
         listen_temp(2) # oil temp
         listen_oil_pressure()
         listen_ignition(chip.get_line(13))
+        listen_clutch_switch(chip.get_line(26))
+        listen_abs(chip.get_line(22))
     else:
         open_simulation_window(root, 9000, 150)
 
