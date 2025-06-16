@@ -37,6 +37,7 @@ def start(root):
     root.geometry("800x480")
     root.config(bg="black")
     root.after(100, lambda: root.wm_attributes('-fullscreen', 'true'))
+    root.config(cursor='none')
 
     signal_y = 30
     rpm_bar_y = 100
