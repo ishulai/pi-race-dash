@@ -36,8 +36,9 @@ def start(root):
     root.title("Dash")
     root.geometry("800x480")
     root.config(bg="black")
-    root.after(100, lambda: root.wm_attributes('-fullscreen', 'true'))
     root.config(cursor='none')
+    if not simulation_mode:
+        root.after(50, lambda: root.wm_attributes('-fullscreen', 'true'))
 
     signal_y = 30
     rpm_bar_y = 100
