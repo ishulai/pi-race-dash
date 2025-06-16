@@ -13,6 +13,7 @@ from src.data.fuellevel import listen_fuel, get_fuel_level
 from src.data.oilpressure import listen_oil_pressure, get_oil_pressure
 from src.data.ignition import listen_ignition, get_ignition_state
 from src.data.clutchswitch import listen_clutch_switch, get_clutch_switch_state
+from src.data.abs import listen_abs, get_abs_state
 
 simulation_mode = os.environ.get("SIMULATION_MODE") != None
 
@@ -46,6 +47,7 @@ def start_cli():
             oil_temp = get_temp(2, False)
             oil_pressure = get_oil_pressure()
             ignition_on = get_ignition_state()
+            abs_on = get_abs_state()
 
             # Clear the terminal and display updated values
             print("\033[H\033[J", end="")
@@ -61,6 +63,7 @@ def start_cli():
             print(f"Oil Pressure: {oil_pressure} psi")
             print(f"Acc/Run/Start: {'On' if ignition_on else 'Off'}")
             print(f"Clutch: {'On' if clutch else 'Off'}")
+            print(f"ABS: {'On' if abs_on else 'Off'}")
             print("-" * 50)
 
             time.sleep(0.1)  # Update every second for temperature and fuel level

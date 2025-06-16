@@ -36,6 +36,7 @@ def start(root):
     root.title("Dash")
     root.geometry("800x480")
     root.config(bg="black")
+    root.attributes("-fullscreen", True)
 
     signal_y = 30
     rpm_bar_y = 100
